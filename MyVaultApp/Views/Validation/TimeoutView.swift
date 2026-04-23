@@ -14,6 +14,7 @@ struct TimeoutView: View {
         case usd
     }
     
+    @Binding var navPath: NavigationPath
     @State private var selectedCurrency: Currency = .idr
     @State private var text = ""
     
@@ -159,8 +160,8 @@ struct TimeoutView: View {
                     .fill(Color.themeBlack)
             )
             
-            NavigationLink {
-                EmotionQuestionView()
+            Button {
+                navPath.append("EmotionQuestion")
             } label: {
                 Text("Validate Answer")
                     .font(.title3)
@@ -182,5 +183,5 @@ struct TimeoutView: View {
 }
 
 #Preview {
-    TimeoutView()
+    TimeoutView(navPath: .constant(NavigationPath()))
 }

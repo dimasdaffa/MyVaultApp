@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct CardView: View {
+    @Binding var navPath: NavigationPath
+    
     var body: some View {
-        NavigationStack{
-            VStack(spacing: -150) {
+        VStack(spacing: -150) {
                 VStack {
                     Text("New Balance 740")
                         .font(.system(size: 36))
@@ -66,8 +67,8 @@ struct CardView: View {
                     )
                 .zIndex(2)
                 
-                NavigationLink{
-                    TimeoutView()
+                Button{
+                    navPath.append("Timeout")
                 } label: {
                     VStack {
                         Text("Nintendo DS Lite")
@@ -101,11 +102,10 @@ struct CardView: View {
                     )
                 }
                 .zIndex(1)
-            }
         }
     }
 }
 
 #Preview {
-    CardView()
+    CardView(navPath: .constant(NavigationPath()))
 }

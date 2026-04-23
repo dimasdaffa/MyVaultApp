@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FinanceQuestionView: View {
+    @Binding var navPath: NavigationPath
     @State private var answer: String = ""
     
     var body: some View {
@@ -67,9 +68,9 @@ struct FinanceQuestionView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(
-                    destination: SuccessResultView()
-                ) {
+                Button {
+                    navPath.append("SuccessResult")
+                } label: {
                     HStack(spacing: 4) {
                         Text("Next")
                             .fontWeight(.semibold)
@@ -86,5 +87,5 @@ struct FinanceQuestionView: View {
 }
 
 #Preview {
-    FinanceQuestionView()
+    FinanceQuestionView(navPath: .constant(NavigationPath()))
 }

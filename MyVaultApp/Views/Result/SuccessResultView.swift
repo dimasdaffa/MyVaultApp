@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct SuccessResultView: View {
+    @Binding var navPath: NavigationPath
+    
     var body: some View {
-
             VStack{
                 Image(systemName: "medal.star.fill")
                     .foregroundColor(Color.themePrimary)
@@ -69,10 +70,9 @@ struct SuccessResultView: View {
                 )
                 .padding(.horizontal,25)
                 
-                NavigationLink {
-                    DashboardView()
-                        .navigationBarBackButtonHidden(true)
-                } label: {
+                Button {
+                    navPath.removeLast(navPath.count)
+                } label:{
                     Text("FINISH")
                         .font(.title3)
                         .fontWeight(.medium)
@@ -86,7 +86,6 @@ struct SuccessResultView: View {
                         .shadow(color: Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
                 }
                 .background(Color.themeBackground)
-    
         }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
@@ -95,5 +94,5 @@ struct SuccessResultView: View {
 }
 
 #Preview {
-    SuccessResultView()
+    SuccessResultView(navPath: .constant(NavigationPath()))
 }

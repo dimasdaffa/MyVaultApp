@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct FirstPageView: View {
+    @Binding var navPath: NavigationPath
     @State private var emotionText: String = ""
     
     var body: some View {
-        NavigationStack{
-            VStack{
+        VStack{
                 ProgressBarView()
                 VStack(spacing: 20){
                     HStack(alignment: .lastTextBaseline,spacing: 0){
@@ -55,15 +55,14 @@ struct FirstPageView: View {
                 )
             }
             .padding(.bottom, -10)
-        }
         
         .navigationTitle("Journal")
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(
-                    destination: ReviewJournalView()
-                ) {
+                Button {
+                    navPath.append("ReviewJournal")
+                } label: {
                     HStack(spacing: 4) {
                         Text("Next")
                             .fontWeight(.semibold)
@@ -81,5 +80,5 @@ struct FirstPageView: View {
 
 
 #Preview {
-    FirstPageView()
+    FirstPageView(navPath: .constant(NavigationPath()))
 }

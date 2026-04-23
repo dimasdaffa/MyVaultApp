@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EmotionQuestionView: View {
+    @Binding var navPath: NavigationPath
     @State private var emotionText: String = ""
     
     var body: some View {
@@ -67,9 +68,9 @@ struct EmotionQuestionView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(
-                    destination: FinanceQuestionView()
-                ) {
+                Button {
+                    navPath.append("FinanceQuestion")
+                } label: {
                     HStack(spacing: 4) {
                         Text("Next")
                             .fontWeight(.semibold)
@@ -85,5 +86,5 @@ struct EmotionQuestionView: View {
 }
 
 #Preview {
-    EmotionQuestionView()
+    EmotionQuestionView(navPath: .constant(NavigationPath()))
 }

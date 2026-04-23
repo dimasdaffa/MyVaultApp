@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ReviewJournalView: View {
+    @Binding var navPath: NavigationPath
     
     var body: some View {
 
@@ -45,9 +46,8 @@ struct ReviewJournalView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink {
-                    DashboardView()
-                        .navigationBarBackButtonHidden(true)
+                Button {
+                    navPath.removeLast(navPath.count)
                 } label: {
                     Image(systemName: "checkmark")
                         .font(.system(size: 16))
@@ -59,5 +59,5 @@ struct ReviewJournalView: View {
 }
 
 #Preview {
-    ReviewJournalView()
+    ReviewJournalView(navPath: .constant(NavigationPath()))
 }

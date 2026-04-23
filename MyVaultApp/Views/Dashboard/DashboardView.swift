@@ -8,18 +8,17 @@
 import SwiftUI
 
 struct DashboardView: View {
+    @State private var navPath = NavigationPath()
     
     var body: some View {
-        NavigationStack {
+        NavigationStack (path: $navPath) {
             VStack () {
                 HStack {
                     Text("MyVault")
                         .font(Font.largeTitle)
                         .bold()
                     Spacer()
-                    NavigationLink {
-                        CreateItemView()
-                    } label: {
+                    NavigationLink(value: "CreateItem") {
                         Image(systemName: "plus")
                             .font(.title2)
                             .fontWeight(.bold)
@@ -34,8 +33,9 @@ struct DashboardView: View {
                 }
                 .padding(20)
                 
-                CardView()
+                CardView(navPath: $navPath)
                     .padding(.top, 16)
+                
                 HStack{
                     Spacer()
                     Text("Validate your decision!")
@@ -47,6 +47,26 @@ struct DashboardView: View {
                 Spacer()
             }
             .background(Color.themeBackground)
+            .navigationDestination(for: String.self) { route in
+                            switch route {
+                            case "CreateItem":
+                                CreateItemView(navPath: $navPath)
+                            case "FirstPage":
+                                FirstPageView(navPath: $navPath)
+                            case "ReviewJournal":
+                                ReviewJournalView(navPath: $navPath)
+                            case "Timeout":
+                                TimeoutView(navPath: $navPath)
+                            case "EmotionQuestion":
+                                EmotionQuestionView(navPath: $navPath)
+                            case "FinanceQuestion":
+                                FinanceQuestionView(navPath: $navPath)
+                            case "SuccessResult":
+                                SuccessResultView(navPath: $navPath)
+                            default:
+                                EmptyView()
+                            }
+                        }
         }
     }
 }
