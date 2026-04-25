@@ -9,62 +9,80 @@ import SwiftUI
 
 struct QuestionJournalView: View {
     @Binding var navPath: NavigationPath
-    @State private var emotionText: String = ""
+    @State private var viewModel = JournalViewModel()
+    @State private var currentAnswer: String = ""
     
     var body: some View {
         VStack{
-                ProgressBarView()
-                VStack(spacing: 20){
-                    HStack(alignment: .lastTextBaseline,spacing: 0){
-                        Text("2/")
-                            .font(.system(size: 70))
-                            .bold()
-                        Text("8")
-                            .font(.system(size: 44))
-                            .bold()
-                            .foregroundStyle(Color.themePrimary)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 43)
-                    .padding(.top,33)
+            ProgressBarView()
+            VStack(spacing: 20){
+                HStack(alignment: .lastTextBaseline,spacing: 0){
+                    Text("\(viewModel.currentProgress)/")
+                        .font(.system(size: 70))
+                        .bold()
+                        .foregroundStyle(viewModel.isLastQuestion ? Color.themePrimary : Color.black)
                     
-                    HStack{
-                        Text("Is it something I will use \nregularly?")
-                            .font(.system(size: 27))
-                        Spacer()
-                    }
-                    .padding(.horizontal, 44)
-                    Spacer()
-                    
-                    VStack{
-                        TextField("Express your emotion here...", text: $emotionText)
-                            .font(.system(size: 20))
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(Color.gray.opacity(0.3))
-                    }
-                    .padding(.horizontal, 44)
-                    .offset(y: -50)
+                    Text("\(viewModel.totalQuestions)")
+                        .font(.system(size: 44))
+                        .bold()
+                        .foregroundStyle(Color.themePrimary)
                     Spacer()
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 42)
-                        .fill(Color.themeCard)
-                        .padding(.top,12)
-                        .padding(.horizontal,25)
-                )
+                .padding(.horizontal, 43)
+                .padding(.top,33)
+                
+                HStack{
+                    Text(viewModel.questions[viewModel.currentIndex].text)
+                        .font(.system(size: 27))
+                        .animation(.easeInOut, value: viewModel.currentIndex)
+                    Spacer()
+                }
+                .padding(.horizontal, 44)
+                Spacer()
+                
+                VStack{
+                    TextField("Express your thoughts here...",
+                              text: $currentAnswer,
+                              axis: .vertical
+                    )
+                    .lineLimit(1...6)
+                    .font(.system(size: 20))
+                    
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(Color.gray.opacity(0.3))
+                }
+                .padding(.horizontal, 44)
+                .offset(y: -50)
+                Spacer()
             }
-            .padding(.bottom, -10)
+            .background(
+                RoundedRectangle(cornerRadius: 42)
+                    .fill(Color.themeCard)
+                    .padding(.top,12)
+                    .padding(.horizontal,25)
+            )
+        }
+        .padding(.bottom, -10)
         
         .navigationTitle("Journal")
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    navPath.append("ReviewJournal")
+                    if viewModel.isLastQuestion {
+                        // pindah halaman jika sudah pertanyaan terakhir
+                        navPath.append("ReviewJournal")
+                    } else {
+                        // jika belum, ganti ke pertanyaan selanjutnya
+                        withAnimation(.spring()) {
+                            viewModel.nextQuestion()
+                            currentAnswer = ""
+                        }
+                    }
                 } label: {
                     HStack(spacing: 4) {
-                        Text("Next")
+                        Text(viewModel.isLastQuestion ? "Finish" : "Next")
                             .fontWeight(.semibold)
                         Image(systemName: "chevron.right")
                     }
@@ -72,6 +90,7 @@ struct QuestionJournalView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                 }
+                .disabled(currentAnswer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }
     }
