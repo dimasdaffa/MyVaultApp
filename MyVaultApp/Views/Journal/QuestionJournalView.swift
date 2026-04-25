@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FirstPageView: View {
+struct QuestionJournalView: View {
     @Binding var navPath: NavigationPath
     @State private var emotionText: String = ""
     
@@ -80,5 +80,5 @@ struct FirstPageView: View {
 
 
 #Preview {
-    FirstPageView(navPath: .constant(NavigationPath()))
+    QuestionJournalView(navPath: .constant(NavigationPath()))
 }

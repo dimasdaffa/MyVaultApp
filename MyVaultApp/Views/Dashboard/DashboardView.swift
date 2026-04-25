@@ -52,7 +52,7 @@ struct DashboardView: View {
                             case "CreateItem":
                                 CreateItemView(navPath: $navPath)
                             case "FirstPage":
-                                FirstPageView(navPath: $navPath)
+                                QuestionJournalView(navPath: $navPath)
                             case "ReviewJournal":
                                 ReviewJournalView(navPath: $navPath)
                             case "Timeout":
