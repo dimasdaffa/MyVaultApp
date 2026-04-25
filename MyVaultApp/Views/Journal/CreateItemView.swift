@@ -16,7 +16,9 @@ struct CreateItemView: View {
     
     @Binding var navPath: NavigationPath
     @State private var selectedCurrency: Currency = .idr
-    @State private var text = ""
+    @State private var itemTitle: String = ""
+    @State private var itemPrice: String = ""
+    @State private var itemLink: String = ""
     
     var body: some View {
         VStack{
@@ -58,7 +60,7 @@ struct CreateItemView: View {
                             .bold()
                         Spacer()
                     }
-                    TextField("What's catching your eye?", text: $text)
+                    TextField("What's catching your eye?", text: $itemTitle)
                         .padding(19)
                         .background(Color.themeCard)
                         .cornerRadius(42)
@@ -81,7 +83,16 @@ struct CreateItemView: View {
                         HStack{
                             Image(systemName: "dollarsign")
                                 .font(.system(size: 20))
-                            TextField("0.000,00", text: $text)
+                            TextField("0", text: $itemPrice)
+                                .keyboardType(.numberPad)
+                                .onChange(of: itemPrice) { newValue in
+                                    // Format number
+                                    itemPrice = formatCurrency(newValue, currency: selectedCurrency)
+                                }
+                                .onChange(of: selectedCurrency) { _ in
+                                    // Reformat when user change currency
+                                    itemPrice = formatCurrency(itemPrice, currency: selectedCurrency)
+                                }
                         }
                         .frame(maxWidth: 400)
                         .padding(19)
@@ -118,7 +129,7 @@ struct CreateItemView: View {
                     HStack{
                         Image(systemName: "link")
                             .font(.system(size: 20))
-                        TextField("http://...", text: $text)
+                        TextField("http://...", text: $itemLink)
                         
                     }
                     .padding(19)
@@ -151,7 +162,27 @@ struct CreateItemView: View {
         .navigationTitle("New Entry")
         .toolbar(.hidden, for: .tabBar)
     }
+    
+    private func formatCurrency(_ value: String, currency: Currency) -> String {
+        let numbersOnly = value.filter { "0123456789".contains($0) }
+        guard let number = Int(numbersOnly) else { return "" }
+        
+        // 2. Format sesuai mata uang
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        switch currency {
+        case .idr:
+            formatter.groupingSeparator = "." // IDR
+        case .usd, .rm:
+            formatter.groupingSeparator = "," // USD/RM
+        }
+        
+        return formatter.string(from: NSNumber(value: number)) ?? ""
+    }
 }
+
+
 
 #Preview {
     CreateItemView(navPath: .constant(NavigationPath()))
