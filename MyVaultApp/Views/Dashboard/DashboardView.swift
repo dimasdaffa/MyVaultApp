@@ -61,8 +61,10 @@ struct DashboardView: View {
                                 EmotionQuestionView(navPath: $navPath)
                             case "FinanceQuestion":
                                 FinanceQuestionView(navPath: $navPath)
-                            case "SuccessResult":
-                                SuccessResultView(navPath: $navPath)
+                            case "BuyResult":
+                                BuyResultView(navPath: $navPath)
+                            case "NoBuyResult":
+                                NoBuyResultView(navPath: $navPath)
                             default:
                                 EmptyView()
                             }

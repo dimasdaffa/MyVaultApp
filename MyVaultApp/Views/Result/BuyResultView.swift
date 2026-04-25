@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SuccessResultView: View {
+struct BuyResultView: View {
     @Binding var navPath: NavigationPath
     
     var body: some View {
@@ -94,5 +94,5 @@ struct SuccessResultView: View {
 }
 
 #Preview {
-    SuccessResultView(navPath: .constant(NavigationPath()))
+    BuyResultView(navPath: .constant(NavigationPath()))
 }
