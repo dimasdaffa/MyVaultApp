@@ -10,69 +10,86 @@ import SwiftUI
 struct FinanceQuestionView: View {
     @Binding var navPath: NavigationPath
     @State private var answer: String = ""
+    @EnvironmentObject var viewModel: ValidationViewModel
     
     var body: some View {
-
-            VStack{
-                ProgressBarView()
-                VStack(spacing: 20){
-                    HStack(alignment: .lastTextBaseline,spacing: 0){
-                        Text("14/")
-                            .font(.system(size: 70))
-                            .bold()
-                        Text("14")
-                            .font(.system(size: 44))
-                            .bold()
-                        Spacer()
-                    }
-                    .foregroundStyle(Color.themePrimary)
-                    .padding(.horizontal, 43)
-                    .padding(.top,33)
-                    
-                    HStack{
-                        Text("Does buying this take money away from my monthly savings goal?")
-                            .font(.system(size: 27))
-                        Spacer()
-                    }
-                    .padding(.horizontal, 44)
-                    Spacer()
-                    
-                    VStack(spacing: 15){
-                        ForEach(["Yes", "No"], id: \.self) { option in
-                            Button(action: {
-                                answer = option
-                            }) {
-                                Text(option)
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .tint(answer == option ? Color.themePrimary : Color.gray.opacity(0.5))
-                        }
-                    }
-                    .foregroundColor(Color.themeBackground)
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .padding(.horizontal, 50)
-                    Spacer()
+        
+        VStack{
+            ProgressBarView()
+            VStack(spacing: 20){
+                HStack(alignment: .lastTextBaseline,spacing: 0){
+                    Text("\(viewModel.currentTotalProgress)/")
+                        .font(.system(size: 70))
+                        .bold()
+                        .foregroundStyle(viewModel.currentFinanceIndex == 1 ? Color.themePrimary : Color.black)
+                    Text("14")
+                        .font(.system(size: 44))
+                        .bold()
                     Spacer()
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 42)
-                        .fill(Color.themeCard)
-                        .padding(.top,12)
-                        .padding(.horizontal,25)
-                )
+                .foregroundStyle(Color.themePrimary)
+                .padding(.horizontal, 43)
+                .padding(.top,33)
+                
+                HStack{
+                    Text(viewModel.financeQuestions[viewModel.currentFinanceIndex].text)
+                        .font(.system(size: 27))
+                        .animation(.easeInOut, value: viewModel.currentFinanceIndex)
+                    Spacer()
+                }
+                .padding(.horizontal, 44)
+                Spacer()
+                
+                VStack(spacing: 15){
+                    ForEach(["Yes", "No"], id: \.self) { option in
+                        Button(action: {
+                            // Simpan jawaban "Yes" atau "No"
+                            viewModel.financeQuestions[viewModel.currentFinanceIndex].answer = option
+                        }) {
+                            Text(option)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .tint(viewModel.financeQuestions[viewModel.currentFinanceIndex].answer == option ? Color.themePrimary : Color.gray.opacity(0.5))
+                    }
+                }
+                .foregroundColor(Color.themeBackground)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .padding(.horizontal, 50)
+                Spacer()
+                Spacer()
             }
-            .padding(.bottom, -10)
-
+            .background(
+                RoundedRectangle(cornerRadius: 42)
+                    .fill(Color.themeCard)
+                    .padding(.top,12)
+                    .padding(.horizontal,25)
+            )
+        }
+        .padding(.bottom, -10)
+        
         .navigationTitle("Validation")
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    navPath.append("SuccessResult")
+                    // LOGIKA RESULT
+                    if viewModel.currentFinanceIndex == 1 {
+                        // Jika sudah pertanyaan terakhir (Q2), lempar ke Result
+                        if viewModel.finalDecisionIsBuy {
+                            navPath.append("BuyResult")
+                        } else {
+                            navPath.append("NoBuyResult")
+                        }
+                    } else {
+                        // Jika masih Q1, lanjut ke Q2
+                        withAnimation(.spring()) {
+                            viewModel.nextFinanceQuestion()
+                        }
+                    }
                 } label: {
                     HStack(spacing: 4) {
-                        Text("Next")
+                        Text(viewModel.currentFinanceIndex == 1 ? "Finish" : "Next")
                             .fontWeight(.semibold)
                         Image(systemName: "chevron.right")
                     }
@@ -80,12 +97,15 @@ struct FinanceQuestionView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                 }
+                // Matikan tombol NEXT jika belum dijawab
+                .disabled(viewModel.financeQuestions[viewModel.currentFinanceIndex].answer == nil)
             }
         }
-
+        
     }
 }
 
 #Preview {
     FinanceQuestionView(navPath: .constant(NavigationPath()))
+        .environmentObject(ValidationViewModel())
 }

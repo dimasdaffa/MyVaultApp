@@ -7,12 +7,6 @@
 import Combine
 import Foundation
 
-
-struct JournalQuestion{
-    let text: String
-    var answer: String = ""
-}
-
 class JournalViewModel: ObservableObject{
     @Published var questions: [JournalQuestion] = [
         JournalQuestion(text: "Is this item going to add value to my life?"),

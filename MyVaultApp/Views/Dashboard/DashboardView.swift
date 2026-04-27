@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DashboardView: View {
     @State private var navPath = NavigationPath()
+    @StateObject private var validationVM = ValidationViewModel()
     
     var body: some View {
         NavigationStack (path: $navPath) {
@@ -48,28 +49,29 @@ struct DashboardView: View {
             }
             .background(Color.themeBackground)
             .navigationDestination(for: String.self) { route in
-                            switch route {
-                            case "CreateItem":
-                                CreateItemView(navPath: $navPath)
-                            case "FirstPage":
-                                QuestionJournalView(navPath: $navPath)
-                            case "ReviewJournal":
-                                ReviewJournalView(navPath: $navPath)
-                            case "Timeout":
-                                TimeoutView(navPath: $navPath)
-                            case "EmotionQuestion":
-                                EmotionQuestionView(navPath: $navPath)
-                            case "FinanceQuestion":
-                                FinanceQuestionView(navPath: $navPath)
-                            case "BuyResult":
-                                BuyResultView(navPath: $navPath)
-                            case "NoBuyResult":
-                                NoBuyResultView(navPath: $navPath)
-                            default:
-                                EmptyView()
-                            }
-                        }
+                switch route {
+                case "CreateItem":
+                    CreateItemView(navPath: $navPath)
+                case "FirstPage":
+                    QuestionJournalView(navPath: $navPath)
+                case "ReviewJournal":
+                    ReviewJournalView(navPath: $navPath)
+                case "Timeout":
+                    TimeoutView(navPath: $navPath)
+                case "EmotionQuestion":
+                    EmotionQuestionView(navPath: $navPath)
+                case "FinanceQuestion":
+                    FinanceQuestionView(navPath: $navPath)
+                case "BuyResult":
+                    BuyResultView(navPath: $navPath)
+                case "NoBuyResult":
+                    NoBuyResultView(navPath: $navPath)
+                default:
+                    EmptyView()
+                }
+            }
         }
+        .environmentObject(validationVM)
     }
 }
 

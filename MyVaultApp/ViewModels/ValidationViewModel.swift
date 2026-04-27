@@ -7,16 +7,6 @@
 
 import Combine
 
-struct EmotionQuestion {
-    let text: String
-    var score: Int?
-}
-
-struct FinanceQuestion {
-    let text: String
-    var answer: String?
-}
-
 class ValidationViewModel: ObservableObject {
     @Published var emotionQuestions: [EmotionQuestion] = [
         EmotionQuestion(text: "I feel this price is a \"special deal\" that won't last."),
