@@ -64,7 +64,9 @@ struct QuestionJournalView: View {
             )
         }
         .padding(.bottom, -10)
-        
+        .onAppear {
+                    currentAnswer = viewModel.questions[viewModel.currentIndex].answer
+                }
         .navigationTitle("Journal")
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
@@ -77,7 +79,7 @@ struct QuestionJournalView: View {
                         // jika belum, ganti ke pertanyaan selanjutnya
                         withAnimation(.spring()) {
                             viewModel.nextQuestion()
-                            currentAnswer = ""
+                            currentAnswer = viewModel.questions[viewModel.currentIndex].answer
                         }
                     }
                 } label: {
@@ -100,4 +102,5 @@ struct QuestionJournalView: View {
 
 #Preview {
     QuestionJournalView(navPath: .constant(NavigationPath()))
+        .environmentObject(JournalViewModel())
 }
