@@ -19,12 +19,13 @@ struct TimeoutView: View {
     @State private var showJournalSheet = false
     @EnvironmentObject var journalVM: JournalViewModel
     
+    @State private var isTimerFinished: Bool = true
+    
     var body: some View {
-        
-        VStack () {
-            HStack(){
-                VStack(alignment: .leading, spacing: -15){
-                    HStack{
+        VStack {
+            HStack {
+                VStack(alignment: .leading, spacing: -15) {
+                    HStack {
                         Text("Time")
                             .font(.system(size: 45))
                             .bold()
@@ -33,15 +34,13 @@ struct TimeoutView: View {
                             .bold()
                             .foregroundColor(Color.themePrimary)
                     }
-                    
-                    
                 }
                 Spacer()
-                
             }
             .padding(.horizontal, 31)
-            HStack(){
-                VStack(alignment: .leading){
+            
+            HStack {
+                VStack(alignment: .leading) {
                     Text("Review your mood and your bank")
                         .font(.system(size: 19))
                         .fontWeight(.light)
@@ -51,10 +50,8 @@ struct TimeoutView: View {
                     Text("making the call.")
                         .font(.system(size: 19))
                         .fontWeight(.light)
-                    
                 }
                 Spacer()
-                
             }
             .padding(.horizontal, 31)
             
@@ -86,8 +83,8 @@ struct TimeoutView: View {
                         .bold()
                         .offset(x: -45)
                 }
-                HStack{
-                    HStack{
+                HStack {
+                    HStack {
                         Image(systemName: "dollarsign")
                             .font(.system(size: 20))
                         TextField("", text: .constant("1.740.000"))
@@ -98,14 +95,14 @@ struct TimeoutView: View {
                     .padding(19)
                     .background(Color.themeCard)
                     .cornerRadius(42)
-                    HStack{
+                    
+                    HStack {
                         Text("IDR")
                             .font(.system(size: 20))
                             .foregroundColor(.primary)
                             .disabled(true)
                     }
                     .frame(maxWidth: 100)
-                    
                     .padding(19)
                     .background(Color.themeCard)
                     .cornerRadius(42)
@@ -121,7 +118,7 @@ struct TimeoutView: View {
                         .bold()
                     Spacer()
                 }
-                HStack{
+                HStack {
                     Image(systemName: "link")
                         .font(.system(size: 20))
                     TextField("", text: .constant("http://foot.com/nb740"))
@@ -131,77 +128,77 @@ struct TimeoutView: View {
                 .padding(19)
                 .background(Color.themeCard)
                 .cornerRadius(42)
-                
             }
             .padding(.top, 14)
             .padding(.horizontal, 31)
-        }
-        HStack {
-            Spacer()
-            Button {
-                showJournalSheet = true
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "doc.text.magnifyingglass")
-                    Text("Read Initial Thoughts")
+            
+            HStack {
+                Spacer()
+                Button {
+                    showJournalSheet = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "doc.text.magnifyingglass")
+                        Text(isTimerFinished ? "Read Initial Thoughts" : "Review & Edit Thoughts")
+                    }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Color.themePrimary)
+                    .underline()
                 }
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(Color.themePrimary)
-                .underline()
             }
-        }
-        .padding(.top,5)
-        .padding(.horizontal, 30)
-        Spacer()
-        
-        VStack{
-            Text("REMAINING DURATION")
-                .font(.system(size: 13))
-                .fontWeight(.medium)
-                .foregroundColor(.gray)
-            HStack(spacing: 0){
-                Text("00:")
-                    .font(.system(size: 58))
-                    .foregroundStyle(Color.themeBackground)
-                Text("00")
-                    .font(.system(size: 58))
-                    .foregroundStyle(Color.themeRed.opacity(0.75))
-                Text(":00")
-                    .font(.system(size: 58))
-                    .foregroundStyle(Color.themeBackground)
+            .padding(.top, 5)
+            .padding(.horizontal, 30)
+            
+            Spacer()
+            
+            VStack {
+                Text("REMAINING DURATION")
+                    .font(.system(size: 13))
+                    .fontWeight(.medium)
+                    .foregroundColor(.gray)
+                HStack(spacing: 0) {
+                    Text("00:")
+                        .font(.system(size: 58))
+                        .foregroundStyle(Color.themeBackground)
+                    Text("00")
+                        .font(.system(size: 58))
+                        .foregroundStyle(Color.themeRed.opacity(0.75))
+                    Text(":00")
+                        .font(.system(size: 58))
+                        .foregroundStyle(Color.themeBackground)
+                }
             }
+            .padding(30)
+            .padding(.horizontal, 25)
+            .background(
+                RoundedRectangle(cornerRadius: 42)
+                    .fill(Color.themeBlack)
+            )
+            
+            Button {
+                navPath.append("EmotionQuestion")
+            } label: {
+                Text("Validate Answer")
+                    .fontWeight(.medium)
+                    .foregroundColor(isTimerFinished ? .white : .gray)
+                    .frame(width: 350, height: 62)
+                    .background(
+                        RoundedRectangle(cornerRadius: 40)
+                            .fill(isTimerFinished ? Color.themePrimary : Color.gray.opacity(0.3))
+                    )
+                    .shadow(color: isTimerFinished ? Color.themePrimary.opacity(0.8) : Color.clear, radius: 10, x: 0, y: 5)
+            }
+            .background(Color.themeBackground)
+            .disabled(!isTimerFinished)
+            
         }
-        .padding(30)
-        .padding(.horizontal,25)
-        .background(
-            RoundedRectangle(cornerRadius: 42)
-                .fill(Color.themeBlack)
-        )
-        
-        Button {
-            navPath.append("EmotionQuestion")
-        } label: {
-            Text("Validate Answer")
-                .font(.title3)
-                .fontWeight(.medium)
-                .foregroundColor(.white)
-                .frame(width: 350, height: 62)
-                .background(
-                    RoundedRectangle(cornerRadius: 40)
-                        .fill(Color.themePrimary)
-                )
-                .glassEffect()
-                .shadow(color: Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
-        }
-        .background(Color.themeBackground)
-        
-        .navigationTitle("Validation")
+        .navigationTitle(isTimerFinished ? "Validation" : "Cooling Down")
         .sheet(isPresented: $showJournalSheet) {
             NavigationStack {
-                ReviewJournalView(navPath: $navPath, isPresentedAsSheet: true)
+                ReviewJournalView(navPath: $navPath, isPresentedAsSheet: true, canEdit: !isTimerFinished)
             }
+            .environmentObject(journalVM)
         }
-        .toolbar(.hidden, for: .tabBar)
     }
 }
 

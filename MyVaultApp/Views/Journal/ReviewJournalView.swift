@@ -13,6 +13,7 @@ struct ReviewJournalView: View {
     @Environment(\.dismiss) var dismiss
     
     var isPresentedAsSheet: Bool = false
+    var canEdit: Bool = true
     
     var body: some View {
         ScrollView {
@@ -39,9 +40,17 @@ struct ReviewJournalView: View {
                     ForEach(Array(journalVM.questions.enumerated()), id: \.element.text) { index, question in
                         
                         Button {
-                            if !isPresentedAsSheet {
+                            if canEdit {
                                 journalVM.currentIndex = index
-                                navPath.removeLast()
+                                
+                                if isPresentedAsSheet {
+                                    dismiss()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        navPath.append("QuestionJournal")
+                                    }
+                                } else {
+                                    navPath.removeLast()
+                                }
                             }
                         } label: {
                             VStack(alignment: .leading, spacing: 12) {
@@ -73,7 +82,7 @@ struct ReviewJournalView: View {
                             .padding(.horizontal, 25)
                         }
                         .buttonStyle(.plain)
-                        .disabled(isPresentedAsSheet)
+                        .disabled(!canEdit)
                     }
                 }
             }
