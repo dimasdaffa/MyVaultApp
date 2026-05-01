@@ -9,7 +9,7 @@ import SwiftUI
 
 struct QuestionJournalView: View {
     @Binding var navPath: NavigationPath
-    @State private var viewModel = JournalViewModel()
+    @EnvironmentObject var viewModel: JournalViewModel
     @State private var currentAnswer: String = ""
     
     var body: some View {

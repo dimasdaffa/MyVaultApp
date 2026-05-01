@@ -15,6 +15,9 @@ struct TimeoutView: View {
     }
     
     @Binding var navPath: NavigationPath
+    @State private var text = ""
+    @State private var showJournalSheet = false
+    @EnvironmentObject var journalVM: JournalViewModel
     
     var body: some View {
         
@@ -133,7 +136,24 @@ struct TimeoutView: View {
             .padding(.top, 14)
             .padding(.horizontal, 31)
         }
+        HStack {
+            Spacer()
+            Button {
+                showJournalSheet = true
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "doc.text.magnifyingglass")
+                    Text("Read Initial Thoughts")
+                }
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(Color.themePrimary)
+                .underline()
+            }
+        }
+        .padding(.top,5)
+        .padding(.horizontal, 30)
         Spacer()
+        
         VStack{
             Text("REMAINING DURATION")
                 .font(.system(size: 13))
@@ -176,10 +196,16 @@ struct TimeoutView: View {
         .background(Color.themeBackground)
         
         .navigationTitle("Validation")
+        .sheet(isPresented: $showJournalSheet) {
+            NavigationStack {
+                ReviewJournalView(navPath: $navPath, isPresentedAsSheet: true)
+            }
+        }
         .toolbar(.hidden, for: .tabBar)
     }
 }
 
 #Preview {
     TimeoutView(navPath: .constant(NavigationPath()))
+        .environmentObject(JournalViewModel())
 }

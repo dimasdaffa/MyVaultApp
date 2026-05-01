@@ -10,6 +10,7 @@ import SwiftUI
 struct DashboardView: View {
     @State private var navPath = NavigationPath()
     @StateObject private var validationVM = ValidationViewModel()
+    @StateObject private var journalVM = JournalViewModel()
     
     var body: some View {
         NavigationStack (path: $navPath) {
@@ -72,6 +73,7 @@ struct DashboardView: View {
             }
         }
         .environmentObject(validationVM)
+        .environmentObject(journalVM)
     }
 }
 
