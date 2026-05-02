@@ -6,20 +6,34 @@
 //
 
 import SwiftUI
+import Combine
 
 struct TimeoutView: View {
-    enum Currency {
-        case rm
-        case idr
-        case usd
-    }
-    
     @Binding var navPath: NavigationPath
-    @State private var text = ""
-    @State private var showJournalSheet = false
     @EnvironmentObject var journalVM: JournalViewModel
     
-    var isTimerFinished: Bool
+    // THE TIMER STATES
+    @State private var isTimerFinished: Bool
+    @State private var timeRemaining: TimeInterval
+    @State private var showJournalSheet = false
+    
+    // THE HEARTBEAT PUBLISHER (Fires every 1 second)
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    // This allows DashboardView to pass 'isTimerFinished' smoothly
+    init(navPath: Binding<NavigationPath>, isTimerFinished: Bool) {
+        self._navPath = navPath
+        self._isTimerFinished = State(initialValue: isTimerFinished)
+        
+        // MOCK DATA: If finished, set 0. If not, set a 15-second countdown for testing!
+        // (In the real app, this will calculate the difference from the target date)
+        self._timeRemaining = State(initialValue: isTimerFinished ? 0 : 15)
+    }
+    
+    // TIME FORMATTING HELPERS
+    var hours: String { String(format: "%02d", Int(timeRemaining) / 3600) }
+    var minutes: String { String(format: "%02d", (Int(timeRemaining) % 3600) / 60) }
+    var seconds: String { String(format: "%02d", Int(timeRemaining) % 60) }
     
     var body: some View {
         VStack {
@@ -87,7 +101,7 @@ struct TimeoutView: View {
             VStack {
                 HStack {
                     Text("PRICE")
-                        .font(.system(size: 15))
+                        .font(.system(size: 15)) 
                         .bold()
                     Spacer()
                     Text("CURRENCY")
@@ -163,29 +177,30 @@ struct TimeoutView: View {
             
             Spacer()
             
+            // THE LIVE TICKING DISPLAY
             VStack {
                 Text("REMAINING DURATION")
                     .font(.system(size: 13))
                     .fontWeight(.medium)
                     .foregroundColor(.gray)
                 HStack(spacing: 0) {
-                    Text("00:")
-                        .font(.system(size: 58))
+                    Text("\(hours):")
                         .foregroundStyle(Color.themeBackground)
-                    Text("00")
-                        .font(.system(size: 58))
-                        .foregroundStyle(Color.themeRed.opacity(0.75))
-                    Text(":00")
-                        .font(.system(size: 58))
+                    Text("\(minutes)")
+                        .foregroundStyle(isTimerFinished ? Color.themePrimary : Color.themeBackground)
+                    Text(":\(seconds)")
                         .foregroundStyle(Color.themeBackground)
                 }
+                .font(.system(size: 58))
+                .monospacedDigit() // Membuat size angka sama
             }
             .padding(30)
-            .padding(.horizontal, 25)
+            .frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 42)
                     .fill(Color.themeBlack)
             )
+            .padding(.horizontal, 30)
             
             Button {
                 navPath.append("EmotionQuestion")
@@ -211,10 +226,24 @@ struct TimeoutView: View {
             }
             .environmentObject(journalVM)
         }
+        // THE ENGINE LOGIC
+        .onReceive(timer) { _ in
+            if timeRemaining > 0 {
+                // Tick down by 1 second
+                timeRemaining -= 1
+            } else {
+                // Lock it in when it hits zero
+                withAnimation(.spring()) {
+                    isTimerFinished = true
+                }
+                // Cancel the timer to save system memory
+                timer.upstream.connect().cancel()
+            }
+        }
     }
 }
 
 #Preview {
-    TimeoutView(navPath: .constant(NavigationPath()),isTimerFinished: false)
+    TimeoutView(navPath: .constant(NavigationPath()), isTimerFinished: false)
         .environmentObject(JournalViewModel())
 }
