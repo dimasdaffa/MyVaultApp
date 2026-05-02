@@ -9,6 +9,8 @@ import SwiftUI
 
 struct DashboardView: View {
     @State private var navPath = NavigationPath()
+    @State private var isPulsing = false
+    @State private var hasReadyItem = false
     @StateObject private var validationVM = ValidationViewModel()
     @StateObject private var journalVM = JournalViewModel()
     
@@ -35,7 +37,7 @@ struct DashboardView: View {
                 }
                 .padding(20)
                 
-                CardView(navPath: $navPath)
+                CardView(navPath: $navPath, hasReadyItem: $hasReadyItem)
                 
                 HStack{
                     Spacer()
@@ -43,11 +45,18 @@ struct DashboardView: View {
                         .font(.system(size: 8))
                         .fontWeight(.light)
                         .foregroundStyle(Color.themeRed)
+                        .opacity(hasReadyItem ? (isPulsing ? 1.0 : 0.4) : 0.0)
+                        .scaleEffect(hasReadyItem && isPulsing ? 1.05 : 1.0)
+                        .onAppear {
+                            withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                                isPulsing = true
+                            }
+                        }
                 }
                 .padding(.horizontal)
                 Spacer()
             }
-            .background(Color.themeBackground)
+            .background(Color.themeBackground.ignoresSafeArea())
             .navigationDestination(for: String.self) { route in
                 switch route {
                 case "CreateItem":
