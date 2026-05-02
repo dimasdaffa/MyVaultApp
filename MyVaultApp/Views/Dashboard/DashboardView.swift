@@ -36,7 +36,6 @@ struct DashboardView: View {
                 .padding(20)
                 
                 CardView(navPath: $navPath)
-                    .padding(.top, 16)
                 
                 HStack{
                     Spacer()
@@ -57,8 +56,10 @@ struct DashboardView: View {
                     QuestionJournalView(navPath: $navPath)
                 case "ReviewJournal":
                     ReviewJournalView(navPath: $navPath)
-                case "Timeout":
-                    TimeoutView(navPath: $navPath)
+                case "Timeout_Ready":
+                    TimeoutView(navPath: $navPath, isTimerFinished: true)
+                case "Timeout_Waiting":
+                    TimeoutView(navPath: $navPath, isTimerFinished: false)
                 case "EmotionQuestion":
                     EmotionQuestionView(navPath: $navPath)
                 case "FinanceQuestion":

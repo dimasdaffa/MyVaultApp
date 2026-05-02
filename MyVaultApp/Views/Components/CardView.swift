@@ -7,15 +7,28 @@
 
 import SwiftUI
 
+struct SolidPressButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .brightness(configuration.isPressed ? -0.1 : 0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
 struct CardView: View {
     @Binding var navPath: NavigationPath
     
     var body: some View {
         VStack(spacing: -150) {
+            
+            Button {
+                navPath.append("Timeout_Waiting")
+            } label: {
                 VStack {
                     Text("New Balance 740")
                         .font(.system(size: 36))
                         .bold()
+                        .foregroundStyle(.primary)
                     HStack(alignment: .lastTextBaseline, spacing: 0){
                         Image(systemName: "timer")
                             .font(.system(size: 20))
@@ -37,12 +50,18 @@ struct CardView: View {
                     UnevenRoundedRectangle(bottomLeadingRadius: 123)
                         .fill(Color.themeBackground)
                 )
-                .zIndex(3)
-                
+            }
+            .buttonStyle(SolidPressButtonStyle())
+            .zIndex(3)
+            
+            Button {
+                navPath.append("Timeout_Waiting")
+            } label: {
                 VStack {
                     Text("Salomon XT")
                         .font(.system(size: 36))
                         .bold()
+                        .foregroundStyle(.white)
                     HStack(alignment: .lastTextBaseline, spacing: 0){
                         Image(systemName: "timer")
                             .font(.system(size: 20))
@@ -50,58 +69,65 @@ struct CardView: View {
                         Spacer()
                         Text("23")
                             .font(.system(size: 52))
+                            .foregroundStyle(.white)
                         Text(":12:00")
                             .font(.system(size: 27))
+                            .foregroundStyle(.white)
                         Spacer()
                         Image(systemName: "timer")
                             .font(.system(size: 20))
+                            .foregroundStyle(.white)
                     }
                     .padding(.horizontal, 15)
                 }
-                .foregroundStyle(Color.themeBackground)
                 .padding(.top, 170)
                 .padding(.bottom, 10)
                 .background(
                     UnevenRoundedRectangle(bottomLeadingRadius: 123)
                         .fill(Color.themePrimary)
-                    )
-                .zIndex(2)
-                
-                Button{
-                    navPath.append("Timeout")
-                } label: {
-                    VStack {
-                        Text("Nintendo DS Lite")
-                            .font(.system(size: 36))
-                            .bold()
-                        HStack(alignment: .lastTextBaseline, spacing: 0){
-                            Image(systemName: "timer")
-                                .font(.system(size: 20))
-                                .opacity(0)
-                            Spacer()
-                            Text("00:")
-                                .font(.system(size: 47))
-                            Text("00")
-                                .font(.system(size: 47))
-                                .foregroundStyle(Color.themeRed.opacity(0.75))
-                            Text(":00")
-                                .font(.system(size: 47))
-                            Spacer()
-                            Image(systemName: "clock.badge.exclamationmark")
-                                .font(.system(size: 20))
-                                .foregroundStyle(Color.themeRed.opacity(0.75))
-                        }
-                        .padding(.horizontal, 15)
+                )
+            }
+            .buttonStyle(SolidPressButtonStyle())
+            .zIndex(2)
+            
+            Button {
+                navPath.append("Timeout_Ready")
+            } label: {
+                VStack {
+                    Text("Nintendo DS Lite")
+                        .font(.system(size: 36))
+                        .bold()
+                        .foregroundStyle(.white)
+                    HStack(alignment: .lastTextBaseline, spacing: 0){
+                        Image(systemName: "timer")
+                            .font(.system(size: 20))
+                            .opacity(0)
+                        Spacer()
+                        Text("00:")
+                            .font(.system(size: 47))
+                            .foregroundStyle(.white)
+                        Text("00")
+                            .font(.system(size: 47))
+                            .foregroundStyle(Color.themeRed.opacity(0.75))
+                        Text(":00")
+                            .font(.system(size: 47))
+                            .foregroundStyle(.white)
+                        Spacer()
+                        Image(systemName: "clock.badge.exclamationmark")
+                            .font(.system(size: 20))
+                            .foregroundStyle(Color.themeRed.opacity(0.75))
                     }
-                    .foregroundStyle(Color.themeBackground)
-                    .padding(.top, 170)
-                    .padding(.bottom, 10)
-                    .background(
-                        UnevenRoundedRectangle(bottomLeadingRadius: 123)
-                            .fill(Color.themeBlack)
-                    )
+                    .padding(.horizontal, 15)
                 }
-                .zIndex(1)
+                .padding(.top, 170)
+                .padding(.bottom, 10)
+                .background(
+                    UnevenRoundedRectangle(bottomLeadingRadius: 123)
+                        .fill(Color.themeBlack)
+                )
+            }
+            .buttonStyle(SolidPressButtonStyle())
+            .zIndex(1)
         }
     }
 }

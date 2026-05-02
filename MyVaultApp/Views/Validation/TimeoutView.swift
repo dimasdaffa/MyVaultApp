@@ -19,17 +19,17 @@ struct TimeoutView: View {
     @State private var showJournalSheet = false
     @EnvironmentObject var journalVM: JournalViewModel
     
-    @State private var isTimerFinished: Bool = true
+    var isTimerFinished: Bool
     
     var body: some View {
         VStack {
             HStack {
                 VStack(alignment: .leading, spacing: -15) {
                     HStack {
-                        Text("Time")
+                        Text(isTimerFinished ? "Time" : "Cooling")
                             .font(.system(size: 45))
                             .bold()
-                        Text("Out.")
+                        Text(isTimerFinished ? "Out." : "Down.")
                             .font(.system(size: 45))
                             .bold()
                             .foregroundColor(Color.themePrimary)
@@ -41,15 +41,27 @@ struct TimeoutView: View {
             
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Review your mood and your bank")
-                        .font(.system(size: 19))
-                        .fontWeight(.light)
-                    Text("account one last time before")
-                        .font(.system(size: 19))
-                        .fontWeight(.light)
-                    Text("making the call.")
-                        .font(.system(size: 19))
-                        .fontWeight(.light)
+                    if isTimerFinished {
+                        Text("Review your mood and your bank")
+                            .font(.system(size: 19))
+                            .fontWeight(.light)
+                        Text("account one last time before")
+                            .font(.system(size: 19))
+                            .fontWeight(.light)
+                        Text("making the call.")
+                            .font(.system(size: 19))
+                            .fontWeight(.light)
+                    } else {
+                        Text("Take a deep breath and let your")
+                            .font(.system(size: 19))
+                            .fontWeight(.light)
+                        Text("emotions settle down before")
+                            .font(.system(size: 19))
+                            .fontWeight(.light)
+                        Text("making a decision.")
+                            .font(.system(size: 19))
+                            .fontWeight(.light)
+                    }
                 }
                 Spacer()
             }
@@ -203,6 +215,6 @@ struct TimeoutView: View {
 }
 
 #Preview {
-    TimeoutView(navPath: .constant(NavigationPath()))
+    TimeoutView(navPath: .constant(NavigationPath()),isTimerFinished: false)
         .environmentObject(JournalViewModel())
 }
