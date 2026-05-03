@@ -10,18 +10,21 @@ import SwiftUI
 struct FinanceQuestionView: View {
     @Binding var navPath: NavigationPath
     @State private var answer: String = ""
-    @EnvironmentObject var viewModel: ValidationViewModel
+    @EnvironmentObject var validationVM: ValidationViewModel
     
     var body: some View {
         
         VStack{
-            ProgressBarView()
+            ProgressBarView(
+                currentStep: 12 + (validationVM.currentFinanceIndex + 1),
+                totalSteps: 14
+            )
             VStack(spacing: 20){
                 HStack(alignment: .lastTextBaseline,spacing: 0){
-                    Text("\(viewModel.currentTotalProgress)/")
+                    Text("\(validationVM.currentTotalProgress)/")
                         .font(.system(size: 70))
                         .bold()
-                        .foregroundStyle(viewModel.currentFinanceIndex == 1 ? Color.themePrimary : Color.black)
+                        .foregroundStyle(validationVM.currentFinanceIndex == 1 ? Color.themePrimary : Color.black)
                     Text("14")
                         .font(.system(size: 44))
                         .bold()
@@ -32,9 +35,9 @@ struct FinanceQuestionView: View {
                 .padding(.top,33)
                 
                 HStack{
-                    Text(viewModel.financeQuestions[viewModel.currentFinanceIndex].text)
+                    Text(validationVM.financeQuestions[validationVM.currentFinanceIndex].text)
                         .font(.system(size: 27))
-                        .animation(.easeInOut, value: viewModel.currentFinanceIndex)
+                        .animation(.easeInOut, value: validationVM.currentFinanceIndex)
                     Spacer()
                 }
                 .padding(.horizontal, 44)
@@ -44,12 +47,12 @@ struct FinanceQuestionView: View {
                     ForEach(["Yes", "No"], id: \.self) { option in
                         Button(action: {
                             // Simpan jawaban "Yes" atau "No"
-                            viewModel.financeQuestions[viewModel.currentFinanceIndex].answer = option
+                            validationVM.financeQuestions[validationVM.currentFinanceIndex].answer = option
                         }) {
                             Text(option)
                                 .frame(maxWidth: .infinity)
                         }
-                        .tint(viewModel.financeQuestions[viewModel.currentFinanceIndex].answer == option ? Color.themePrimary : Color.gray.opacity(0.5))
+                        .tint(validationVM.financeQuestions[validationVM.currentFinanceIndex].answer == option ? Color.themePrimary : Color.gray.opacity(0.5))
                     }
                 }
                 .foregroundColor(Color.themeBackground)
@@ -74,9 +77,9 @@ struct FinanceQuestionView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     // LOGIKA RESULT
-                    if viewModel.currentFinanceIndex == 1 {
+                    if validationVM.currentFinanceIndex == 1 {
                         // Jika sudah pertanyaan terakhir (Q2), lempar ke Result
-                        if viewModel.finalDecisionIsBuy {
+                        if validationVM.finalDecisionIsBuy {
                             navPath.append("BuyResult")
                         } else {
                             navPath.append("NoBuyResult")
@@ -84,12 +87,12 @@ struct FinanceQuestionView: View {
                     } else {
                         // Jika masih Q1, lanjut ke Q2
                         withAnimation(.spring()) {
-                            viewModel.nextFinanceQuestion()
+                            validationVM.nextFinanceQuestion()
                         }
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Text(viewModel.currentFinanceIndex == 1 ? "Finish" : "Next")
+                        Text(validationVM.currentFinanceIndex == 1 ? "Finish" : "Next")
                             .fontWeight(.semibold)
                         Image(systemName: "chevron.right")
                     }
@@ -98,7 +101,7 @@ struct FinanceQuestionView: View {
                     .padding(.vertical, 8)
                 }
                 // Matikan tombol NEXT jika belum dijawab
-                .disabled(viewModel.financeQuestions[viewModel.currentFinanceIndex].answer == nil)
+                .disabled(validationVM.financeQuestions[validationVM.currentFinanceIndex].answer == nil)
             }
         }
         

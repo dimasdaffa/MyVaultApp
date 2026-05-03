@@ -4,29 +4,32 @@
 //
 //  Created by DIMAS DAFFA ERNANDA on 21/04/26.
 //
+//
+//  ProgressBarView.swift
+//  MyVaultApp
+//
 
 import SwiftUI
 
 struct ProgressBarView: View {
-    @EnvironmentObject var viewModel: JournalViewModel
+    var currentStep: Int
+    var totalSteps: Int
     
     var body: some View {
-        // GeometryReader lets us perfectly measure the screen width
         GeometryReader { geometry in
             
-            // Calculate the percentage (e.g., Question 1 of 8 = 0.125)
-            let progressRatio = CGFloat(viewModel.currentIndex + 1) / CGFloat(viewModel.totalQuestions)
+            // Safely calculate the ratio
+            let progressRatio = totalSteps > 0 ? (CGFloat(currentStep) / CGFloat(totalSteps)) : 0
             
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(Color.gray.opacity(0.15))
                     .frame(width: geometry.size.width, height: 8)
-                
                 Capsule()
                     .fill(Color.themePrimary)
                     // Multiply the total width by our percentage
                     .frame(width: geometry.size.width * progressRatio, height: 8)
-                    // Add a nice spring animation so it glides when they hit "Next"
+                    // Add a nice spring animation so it glides smoothly
                     .animation(.spring(response: 0.4, dampingFraction: 0.7), value: progressRatio)
             }
         }
@@ -36,6 +39,10 @@ struct ProgressBarView: View {
 }
 
 #Preview {
-    ProgressBarView()
-        .environmentObject(JournalViewModel())
+    VStack(spacing: 30) {
+        ProgressBarView(currentStep: 1, totalSteps: 8) // Journal Start
+        ProgressBarView(currentStep: 5, totalSteps: 8) // Journal Middle
+        ProgressBarView(currentStep: 1, totalSteps: 2) // Emotion Question
+        ProgressBarView(currentStep: 2, totalSteps: 2) // Finance Question
+    }
 }

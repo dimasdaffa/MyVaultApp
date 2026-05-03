@@ -21,7 +21,7 @@ struct QuestionJournalView: View {
     
     var body: some View {
         VStack{
-            ProgressBarView()
+            ProgressBarView(currentStep: viewModel.currentProgress, totalSteps: viewModel.totalQuestions)
             VStack(spacing: 20){
                 HStack(alignment: .lastTextBaseline,spacing: 0){
                     Text("\(viewModel.currentProgress)/")

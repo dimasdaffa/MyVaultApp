@@ -10,7 +10,8 @@ import SwiftUI
 struct EmotionQuestionView: View {
     @Binding var navPath: NavigationPath
     @State private var emotionText: String = ""
-    @EnvironmentObject var viewModel: ValidationViewModel
+    
+    @EnvironmentObject var validationVM: ValidationViewModel
     
     let emotionOptions = [
         ("Very Strongly", 5),
@@ -23,10 +24,14 @@ struct EmotionQuestionView: View {
     var body: some View {
         
         VStack{
-            ProgressBarView()
+            ProgressBarView(
+                currentStep: validationVM.currentEmotionIndex + 1,
+                totalSteps: 14
+            )
+            
             VStack(spacing: 20){
                 HStack(alignment: .lastTextBaseline,spacing: 0){
-                    Text("\(viewModel.currentTotalProgress)/")
+                    Text("\(validationVM.currentTotalProgress)/")
                         .font(.system(size: 70))
                         .bold()
                     Text("14")
@@ -39,9 +44,10 @@ struct EmotionQuestionView: View {
                 .padding(.top,33)
                 
                 HStack{
-                    Text(viewModel.emotionQuestions[viewModel.currentEmotionIndex].text)
+                    // 2. FIXED PROPERTY NAMES
+                    Text(validationVM.emotionQuestions[validationVM.currentEmotionIndex].text)
                         .font(.system(size: 27))
-                        .animation(.easeInOut, value: viewModel.currentEmotionIndex)
+                        .animation(.easeInOut, value: validationVM.currentEmotionIndex)
                     Spacer()
                 }
                 .padding(.horizontal, 44)
@@ -50,12 +56,12 @@ struct EmotionQuestionView: View {
                 VStack(spacing: 15){
                     ForEach(emotionOptions, id: \.0) { option in
                         Button(action: {
-                            viewModel.emotionQuestions[viewModel.currentEmotionIndex].score = option.1
+                            validationVM.emotionQuestions[validationVM.currentEmotionIndex].score = option.1
                         }) {
                             Text(option.0)
                                 .frame(maxWidth: .infinity)
                         }
-                        .tint(viewModel.emotionQuestions[viewModel.currentEmotionIndex].score == option.1 ? Color.themePrimary : Color.gray.opacity(0.5))
+                        .tint(validationVM.emotionQuestions[validationVM.currentEmotionIndex].score == option.1 ? Color.themePrimary : Color.gray.opacity(0.5))
                     }
                 }
                 .foregroundColor(Color.themeBackground)
@@ -73,19 +79,18 @@ struct EmotionQuestionView: View {
         }
         .padding(.bottom, -10)
         
-        
         .navigationTitle("Validation")
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     // Jika pertanyaan ke-12 (index 11), pindah ke halaman Finansial
-                    if viewModel.currentEmotionIndex == 11 {
+                    if validationVM.currentEmotionIndex == 11 {
                         navPath.append("FinanceQuestion")
                     } else {
                         // Jika belum, lanjut pertanyaan emosi berikutnya
                         withAnimation(.spring()) {
-                            viewModel.nextEmotionQuestion()
+                            validationVM.nextEmotionQuestion()
                         }
                     }
                 } label: {
@@ -99,7 +104,7 @@ struct EmotionQuestionView: View {
                     .padding(.vertical, 8)
                 }
                 // Matikan tombol NEXT jika user belum memilih skala
-                .disabled(viewModel.emotionQuestions[viewModel.currentEmotionIndex].score == nil)
+                .disabled(validationVM.emotionQuestions[validationVM.currentEmotionIndex].score == nil)
             }
         }
     }
