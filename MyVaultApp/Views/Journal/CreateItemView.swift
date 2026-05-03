@@ -188,13 +188,9 @@ struct CreateItemView: View {
             targetDate: target
         )
         
-        // 1. Save it to the iPhone's hard drive
-        modelContext.insert(newItem)
+        journalVM.activeItem = newItem
         
-        // 2. TODO in next step: Tell the JournalViewModel WHICH item we are journaling about right now.
-        // journalVM.activeItem = newItem
-        
-        // 3. Force the user into the Journal Questions!
+        // 3. Force the user into the Journal Questions
         navPath.append("FirstPage")
     }
     

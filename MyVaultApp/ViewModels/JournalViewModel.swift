@@ -4,8 +4,10 @@
 //
 //  Created by DIMAS DAFFA ERNANDA on 25/04/26.
 //
+
 import Combine
 import Foundation
+import SwiftData
 
 class JournalViewModel: ObservableObject{
     @Published var questions: [JournalQuestion] = [
@@ -20,6 +22,7 @@ class JournalViewModel: ObservableObject{
     ]
     
     @Published var currentIndex: Int = 0
+    @Published var activeItem: VaultItem?
     
     var totalQuestions: Int { questions.count }
     var currentProgress: Int { currentIndex + 1 }
@@ -29,5 +32,30 @@ class JournalViewModel: ObservableObject{
         if currentIndex < totalQuestions - 1 {
             currentIndex += 1
         }
+    }
+    
+    // THIS JUST SAVES THE DATA (Call this when they finish the questions)
+    func lockInJournalAnswers() {
+        guard let item = activeItem else { return }
+        
+        var combinedJournalEntry = ""
+        
+        for (index, question) in questions.enumerated() {
+            if !question.answer.trimmingCharacters(in: .whitespaces).isEmpty {
+                combinedJournalEntry += "Q\(index + 1): \(question.text)\n"
+                combinedJournalEntry += "A: \(question.answer)\n\n"
+            }
+        }
+        
+        item.emotionAnswer = combinedJournalEntry.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    // THIS CLEARS THE DATA (Call this ONLY when leaving the Review screen to go home)
+    func resetJournal() {
+        currentIndex = 0
+        for i in 0..<questions.count {
+            questions[i].answer = ""
+        }
+        activeItem = nil
     }
 }

@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ReviewJournalView: View {
     @Binding var navPath: NavigationPath
     @EnvironmentObject var journalVM: JournalViewModel
     @Environment(\.dismiss) var dismiss
+    
+    @Environment(\.modelContext) private var modelContext
     
     var isPresentedAsSheet: Bool = false
     var canEdit: Bool = true
@@ -96,6 +99,18 @@ struct ReviewJournalView: View {
                     Button("Close") { dismiss() }
                 } else {
                     Button {
+                        // 1. COMBINE THE JOURNAL ANSWERS INTO THE ITEM
+                        journalVM.lockInJournalAnswers()
+                        
+                        // 2. NOW WE PERMANENTLY SAVE IT TO SWIFTDATA!
+                        if let finalItemToSave = journalVM.activeItem {
+                            modelContext.insert(finalItemToSave)
+                        }
+                        
+                        // 3. WIPE THE JOURNAL CLEAN FOR THE NEXT TIME
+                        journalVM.resetJournal()
+                        
+                        // 4. POP ALL THE WAY BACK TO DASHBOARD
                         navPath.removeLast(navPath.count)
                     } label: {
                         Image(systemName: "checkmark")

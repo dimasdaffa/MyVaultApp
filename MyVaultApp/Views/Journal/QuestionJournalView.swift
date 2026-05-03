@@ -1,5 +1,5 @@
 //
-//  FirstPageView.swift
+//  QuestionJournalView.swift
 //  MyVaultApp
 //
 //  Created by DIMAS DAFFA ERNANDA on 21/04/26.
@@ -10,7 +10,14 @@ import SwiftUI
 struct QuestionJournalView: View {
     @Binding var navPath: NavigationPath
     @EnvironmentObject var viewModel: JournalViewModel
-    @State private var currentAnswer: String = ""
+    
+    // We use a custom binding to read/write directly to the ViewModel's array
+    private var currentAnswerBinding: Binding<String> {
+        Binding<String>(
+            get: { viewModel.questions[viewModel.currentIndex].answer },
+            set: { viewModel.questions[viewModel.currentIndex].answer = $0 }
+        )
+    }
     
     var body: some View {
         VStack{
@@ -42,7 +49,7 @@ struct QuestionJournalView: View {
                 
                 VStack{
                     TextField("Express your thoughts here...",
-                              text: $currentAnswer,
+                              text: currentAnswerBinding, // BIND DIRECTLY TO VIEWMODEL
                               axis: .vertical
                     )
                     .lineLimit(1...6)
@@ -64,22 +71,20 @@ struct QuestionJournalView: View {
             )
         }
         .padding(.bottom, -10)
-        .onAppear {
-                    currentAnswer = viewModel.questions[viewModel.currentIndex].answer
-                }
         .navigationTitle("Journal")
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     if viewModel.isLastQuestion {
-                        // pindah halaman jika sudah pertanyaan terakhir
+                        // 1. SAVE THE DATA
+                        viewModel.lockInJournalAnswers()
+            
                         navPath.append("ReviewJournal")
                     } else {
-                        // jika belum, ganti ke pertanyaan selanjutnya
+                        // Jika belum, ganti ke pertanyaan selanjutnya
                         withAnimation(.spring()) {
                             viewModel.nextQuestion()
-                            currentAnswer = viewModel.questions[viewModel.currentIndex].answer
                         }
                     }
                 } label: {
@@ -92,13 +97,12 @@ struct QuestionJournalView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                 }
-                .disabled(currentAnswer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                // Disable button if current answer is empty
+                .disabled(currentAnswerBinding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }
     }
-    
 }
-
 
 #Preview {
     QuestionJournalView(navPath: .constant(NavigationPath()))
