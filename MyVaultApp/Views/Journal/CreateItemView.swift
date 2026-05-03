@@ -1,11 +1,12 @@
 //
-//  JournalView.swift
+//  CreateItemView.swift
 //  MyVaultApp
 //
 //  Created by DIMAS DAFFA ERNANDA on 21/04/26.
 //
 
 import SwiftUI
+import SwiftData
 
 struct CreateItemView: View {
     enum Currency {
@@ -15,16 +16,27 @@ struct CreateItemView: View {
     }
     
     @Binding var navPath: NavigationPath
+    
+    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var journalVM: JournalViewModel
+    
     @State private var selectedCurrency: Currency = .idr
     @State private var itemTitle: String = ""
     @State private var itemPrice: String = ""
     @State private var itemLink: String = ""
     
+    // Form is only valid if BOTH Title and Price are filled out
+    var isFormValid: Bool {
+        let isTitleValid = !itemTitle.trimmingCharacters(in: .whitespaces).isEmpty
+        let isPriceValid = !itemPrice.trimmingCharacters(in: .whitespaces).isEmpty && itemPrice != "0"
+        return isTitleValid && isPriceValid
+    }
+    
     var body: some View {
-        VStack{
+        VStack {
             VStack () {
-                HStack(){
-                    VStack(alignment: .leading, spacing: -15){
+                HStack() {
+                    VStack(alignment: .leading, spacing: -15) {
                         Text("Hold That")
                             .font(.system(size: 45))
                             .bold()
@@ -32,13 +44,12 @@ struct CreateItemView: View {
                             .font(.system(size: 45))
                             .bold()
                             .foregroundColor(Color.themePrimary)
-                        
                     }
                     Spacer()
-                    
                 }
                 .padding(.horizontal, 31)
-                HStack(){
+                
+                HStack() {
                     VStack(alignment: .leading){
                         Text("Give your wallet a breather.")
                             .font(.system(size: 19))
@@ -46,10 +57,8 @@ struct CreateItemView: View {
                         Text("Let’s see if this is a ‘need’ or just a ‘now’")
                             .font(.system(size: 19))
                             .fontWeight(.light)
-                        
                     }
                     Spacer()
-                    
                 }
                 .padding(.horizontal, 31)
                 
@@ -98,6 +107,7 @@ struct CreateItemView: View {
                         .padding(19)
                         .background(Color.themeCard)
                         .cornerRadius(42)
+                        
                         HStack{
                             Picker("Currency", selection: $selectedCurrency) {
                                 Text("RM")
@@ -130,6 +140,8 @@ struct CreateItemView: View {
                         Image(systemName: "link")
                             .font(.system(size: 20))
                         TextField("http://...", text: $itemLink)
+                            .keyboardType(.URL)
+                            .autocapitalization(.none)
                         
                     }
                     .padding(19)
@@ -143,7 +155,7 @@ struct CreateItemView: View {
             Spacer()
             
             Button{
-                navPath.append("FirstPage")
+                saveItem()
             } label: {
                 Text("START")
                     .font(.title3)
@@ -152,22 +164,44 @@ struct CreateItemView: View {
                     .frame(width: 350, height: 62)
                     .background(
                         RoundedRectangle(cornerRadius: 40)
-                            .fill(Color.themePrimary)
+                            .fill(isFormValid ? Color.themePrimary : Color.gray.opacity(0.3))
                     )
                     .glassEffect()
-                    .shadow(color: Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
+                    .shadow(color: isFormValid ? Color.themePrimary.opacity(1) : Color.clear, radius: 10, x: 0, y: 5)
             }
+            .disabled(!isFormValid)
             .background(Color.themeBackground)
         }
         .navigationTitle("New Entry")
         .toolbar(.hidden, for: .tabBar)
     }
     
+    private func saveItem() {
+        let target = Date().addingTimeInterval(172800)
+        let currencyString = String(describing: selectedCurrency).uppercased()
+        
+        let newItem = VaultItem(
+            name: itemTitle,
+            price: itemPrice,
+            currency: currencyString,
+            link: itemLink,
+            targetDate: target
+        )
+        
+        // 1. Save it to the iPhone's hard drive
+        modelContext.insert(newItem)
+        
+        // 2. TODO in next step: Tell the JournalViewModel WHICH item we are journaling about right now.
+        // journalVM.activeItem = newItem
+        
+        // 3. Force the user into the Journal Questions!
+        navPath.append("FirstPage")
+    }
+    
     private func formatCurrency(_ value: String, currency: Currency) -> String {
         let numbersOnly = value.filter { "0123456789".contains($0) }
         guard let number = Int(numbersOnly) else { return "" }
         
-        // 2. Format sesuai mata uang
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         
@@ -182,8 +216,8 @@ struct CreateItemView: View {
     }
 }
 
-
-
 #Preview {
     CreateItemView(navPath: .constant(NavigationPath()))
+        .modelContainer(for: VaultItem.self, inMemory: true)
+        .environmentObject(JournalViewModel())
 }

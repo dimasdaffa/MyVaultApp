@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DashboardView: View {
     @State private var navPath = NavigationPath()
@@ -15,6 +16,8 @@ struct DashboardView: View {
     @StateObject private var validationVM = ValidationViewModel()
     @StateObject private var journalVM = JournalViewModel()
     
+    @Query private var vaultItems: [VaultItem]
+    
     var body: some View {
         NavigationStack (path: $navPath) {
             VStack () {
@@ -23,22 +26,29 @@ struct DashboardView: View {
                         .font(Font.largeTitle)
                         .bold()
                     Spacer()
+                    
+                    // 2. Disable the + button if they already have 3 active items!
+                    let activeCount = vaultItems.filter { $0.status == .coolingDown || $0.status == .ready }.count
+                    
                     NavigationLink(value: "CreateItem") {
                         Image(systemName: "plus")
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(activeCount >= 3 ? .white.opacity(0.5) : .white)
                             .frame(width: 56, height: 56)
-                            .background(Color.themePrimary)
+                            .background(activeCount >= 3 ? Color.gray : Color.themePrimary)
                             .glassEffect()
-                            .tint(Color.themePrimary)
-                            .shadow(color: Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
+                            .tint(activeCount >= 3 ? Color.gray : Color.themePrimary)
+                            .shadow(color: activeCount >= 3 ? Color.clear : Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
                             .clipShape(Circle())
                     }
+                    .disabled(activeCount >= 3)
                 }
                 .padding(20)
                 
-                CardView(navPath: $navPath, viewModel: dashboardVM)
+                // 3. Ask the ViewModel to process the raw SwiftData and pass it to the CardView
+                let slots = dashboardVM.processAndSortItems(vaultItems)
+                CardView(navPath: $navPath, itemsForUI: slots, viewModel: dashboardVM)
                 
                 HStack{
                     Spacer()
@@ -58,6 +68,10 @@ struct DashboardView: View {
                 Spacer()
             }
             .background(Color.themeBackground.ignoresSafeArea())
+            // 4. Every time the clock ticks, check if we need to show the red alert text
+            .onReceive(dashboardVM.$currentTime) { _ in
+                dashboardVM.checkAlertStatus(items: vaultItems)
+            }
             .navigationDestination(for: String.self) { route in
                 switch route {
                 case "CreateItem":
@@ -90,4 +104,5 @@ struct DashboardView: View {
 
 #Preview {
     DashboardView()
+        .modelContainer(for: VaultItem.self, inMemory: true)
 }

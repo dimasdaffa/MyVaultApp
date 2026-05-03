@@ -6,10 +6,40 @@
 //
 
 import Foundation
+import SwiftData
 
-struct VaultItem: Identifiable, Equatable {
-    let id = UUID()
+@Model
+class VaultItem {
+    var id: UUID
     var name: String
-    var timeRemaining: TimeInterval
-    var isEmpty: Bool
+    var price: String
+    var currency: String
+    var link: String
+    var dateAdded: Date
+    var targetDate: Date
+    var status: ItemStatus
+    var emotionAnswer: String
+    var financeAnswer: String
+    
+    // The initializer creates a brand new entry
+    init(name: String, price: String = "", currency: String = "IDR", link: String = "", targetDate: Date) {
+        self.id = UUID()
+        self.name = name
+        self.price = price
+        self.currency = currency
+        self.link = link
+        self.dateAdded = Date()
+        self.targetDate = targetDate
+        self.status = ItemStatus.coolingDown
+        self.emotionAnswer = ""
+        self.financeAnswer = ""
+    }
+}
+
+// A simple list of states our item can be in
+enum ItemStatus: String, Codable {
+    case coolingDown = "Cooling Down"
+    case ready = "Ready to Validate"
+    case bought = "Bought"
+    case saved = "Saved"
 }
