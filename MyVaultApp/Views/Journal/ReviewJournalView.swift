@@ -24,7 +24,9 @@ struct ReviewJournalView: View {
                 
                 // Sembunyikan Header Kartu Barang jika sedang di dalam Timeout Sheet
                 if !isPresentedAsSheet {
-                    ItemJournalCardView()
+                    if let activeItem = journalVM.activeItem {
+                        ItemJournalCardView(item: activeItem)
+                    }
                 }
                 
                 HStack {

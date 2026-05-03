@@ -2,41 +2,48 @@
 //  ItemJournalCardView.swift
 //  MyVaultApp
 //
-//  Created by DIMAS DAFFA ERNANDA on 21/04/26.
-//
 
 import SwiftUI
 
 struct ItemJournalCardView: View {
+    var item: VaultItem
+    
     var body: some View {
-        VStack(alignment: .leading,spacing: 15){
-            Text("New Balance 740")
-                .font(.system(size: 35))
-                .bold()
+        VStack(alignment: .leading, spacing: 12) {
+            
+            Text(item.name)
+                .font(.system(size: 34, weight: .bold))
                 .foregroundColor(Color.themePrimary)
-            VStack(alignment: .leading){
-                HStack{
-                    Image(systemName: "banknote.fill")
-                    Text("IDR 1.740.000")
-                }
-                HStack{
+            
+            HStack(spacing: 12) {
+                Image(systemName: "banknote")
+                    .font(.system(size: 22))
+                Text("\(item.currency) \(item.price)")
+                    .font(.system(size: 24))
+            }
+            
+            if !item.link.isEmpty {
+                HStack(spacing: 12) {
                     Image(systemName: "link")
-                    Text("http://foot.com/nb740")
+                        .font(.system(size: 22))
+                    Text(item.link)
+                        .font(.system(size: 24))
+                        .foregroundColor(Color.themePrimary)
                         .underline()
+                        .lineLimit(1)
                 }
             }
-            .font(.system(size: 27))
         }
+        .padding(25)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 42)
+            RoundedRectangle(cornerRadius: 30)
                 .fill(Color.themeCard)
-                .padding(-25)
-            
         )
-//        .padding(.horizontal,50)
+        .padding(.horizontal, 25)
     }
 }
 
 #Preview {
-    ItemJournalCardView()
+    ItemJournalCardView(item: VaultItem(name: "Sony WH-1000XM5", price: "5.000.000", currency: "IDR", link: "https://sony.com",targetDate: Date().addingTimeInterval(172800)))
 }
