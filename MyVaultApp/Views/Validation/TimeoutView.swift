@@ -12,23 +12,12 @@ struct TimeoutView: View {
     @Binding var navPath: NavigationPath
     @EnvironmentObject var journalVM: JournalViewModel
     
+    var item: VaultItem
+    
     // THE TIMER STATES
-    @State private var isTimerFinished: Bool
-    @State private var timeRemaining: TimeInterval
+    @State private var isTimerFinished: Bool = false
+    @State private var timeRemaining: TimeInterval = 0
     @State private var showJournalSheet = false
-    
-    // THE HEARTBEAT PUBLISHER (Fires every 1 second)
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
-    // This allows DashboardView to pass 'isTimerFinished' smoothly
-    init(navPath: Binding<NavigationPath>, isTimerFinished: Bool) {
-        self._navPath = navPath
-        self._isTimerFinished = State(initialValue: isTimerFinished)
-        
-        // MOCK DATA: If finished, set 0. If not, set a 15-second countdown for testing!
-        // (In the real app, this will calculate the difference from the target date)
-        self._timeRemaining = State(initialValue: isTimerFinished ? 0 : 15)
-    }
     
     // TIME FORMATTING HELPERS
     var hours: String { String(format: "%02d", Int(timeRemaining) / 3600) }
@@ -88,7 +77,7 @@ struct TimeoutView: View {
                         .bold()
                     Spacer()
                 }
-                TextField("", text: .constant("New Balance 740"))
+                TextField("", text: .constant(item.name))
                     .foregroundColor(.primary)
                     .disabled(true)
                     .padding(19)
@@ -101,7 +90,7 @@ struct TimeoutView: View {
             VStack {
                 HStack {
                     Text("PRICE")
-                        .font(.system(size: 15)) 
+                        .font(.system(size: 15))
                         .bold()
                     Spacer()
                     Text("CURRENCY")
@@ -113,7 +102,7 @@ struct TimeoutView: View {
                     HStack {
                         Image(systemName: "dollarsign")
                             .font(.system(size: 20))
-                        TextField("", text: .constant("1.740.000"))
+                        TextField("", text: .constant(item.price))
                             .disabled(true)
                             .foregroundColor(.primary)
                     }
@@ -123,7 +112,7 @@ struct TimeoutView: View {
                     .cornerRadius(42)
                     
                     HStack {
-                        Text("IDR")
+                        Text(item.currency)
                             .font(.system(size: 20))
                             .foregroundColor(.primary)
                             .disabled(true)
@@ -147,7 +136,7 @@ struct TimeoutView: View {
                 HStack {
                     Image(systemName: "link")
                         .font(.system(size: 20))
-                    TextField("", text: .constant("http://foot.com/nb740"))
+                    TextField("", text: .constant(item.link.isEmpty ? "No link provided" : item.link))
                         .disabled(true)
                         .foregroundColor(.primary)
                 }
@@ -192,7 +181,7 @@ struct TimeoutView: View {
                         .foregroundStyle(Color.themeBackground)
                 }
                 .font(.system(size: 58))
-                .monospacedDigit() // Membuat size angka sama
+                .monospacedDigit()
             }
             .padding(30)
             .frame(maxWidth: .infinity)
@@ -226,24 +215,33 @@ struct TimeoutView: View {
             }
             .environmentObject(journalVM)
         }
-        // THE ENGINE LOGIC
-        .onReceive(timer) { _ in
-            if timeRemaining > 0 {
-                // Tick down by 1 second
-                timeRemaining -= 1
-            } else {
-                // Lock it in when it hits zero
-                withAnimation(.spring()) {
-                    isTimerFinished = true
-                }
-                // Cancel the timer to save system memory
-                timer.upstream.connect().cancel()
-            }
+        .onAppear {
+            updateTimer()
+        }
+        // Define the timer directly in the modifier
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+            updateTimer()
+        }
+    }
+    
+    // ENGINE LOGIC
+    private func updateTimer() {
+        // Don't waste CPU cycles calculating if we are already at 0
+        if isTimerFinished { return }
+        
+        let remaining = item.targetDate.timeIntervalSince(Date())
+        
+        if remaining > 0 {
+            timeRemaining = remaining
+            isTimerFinished = false
+        } else {
+            timeRemaining = 0
+            isTimerFinished = true
         }
     }
 }
 
 #Preview {
-    TimeoutView(navPath: .constant(NavigationPath()), isTimerFinished: false)
+    TimeoutView(navPath: .constant(NavigationPath()), item: VaultItem(name: "New Balance 740", price: "1.740.000", targetDate: Date().addingTimeInterval(15)))
         .environmentObject(JournalViewModel())
 }

@@ -80,10 +80,6 @@ struct DashboardView: View {
                     QuestionJournalView(navPath: $navPath)
                 case "ReviewJournal":
                     ReviewJournalView(navPath: $navPath)
-                case "Timeout_Ready":
-                    TimeoutView(navPath: $navPath, isTimerFinished: true)
-                case "Timeout_Waiting":
-                    TimeoutView(navPath: $navPath, isTimerFinished: false)
                 case "EmotionQuestion":
                     EmotionQuestionView(navPath: $navPath)
                 case "FinanceQuestion":
@@ -95,6 +91,9 @@ struct DashboardView: View {
                 default:
                     EmptyView()
                 }
+            }
+            .navigationDestination(for: VaultItem.self) { selectedItem in
+                TimeoutView(navPath: $navPath, item: selectedItem)
             }
         }
         .environmentObject(validationVM)
