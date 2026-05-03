@@ -9,17 +9,8 @@ import SwiftUI
 
 struct EmotionQuestionView: View {
     @Binding var navPath: NavigationPath
-    @State private var emotionText: String = ""
     
     @EnvironmentObject var validationVM: ValidationViewModel
-    
-    let emotionOptions = [
-        ("Very Strongly", 5),
-        ("Strongly", 4),
-        ("Moderately", 3),
-        ("Little", 2),
-        ("Least", 1)
-    ]
     
     var body: some View {
         
@@ -54,14 +45,14 @@ struct EmotionQuestionView: View {
                 Spacer()
                 
                 VStack(spacing: 15){
-                    ForEach(emotionOptions, id: \.0) { option in
+                    ForEach(QuestionsData.emotionOptions) { option in
                         Button(action: {
-                            validationVM.emotionQuestions[validationVM.currentEmotionIndex].score = option.1
+                            validationVM.emotionQuestions[validationVM.currentEmotionIndex].score = option.score
                         }) {
-                            Text(option.0)
+                            Text(option.label)
                                 .frame(maxWidth: .infinity)
                         }
-                        .tint(validationVM.emotionQuestions[validationVM.currentEmotionIndex].score == option.1 ? Color.themePrimary : Color.gray.opacity(0.5))
+                        .tint(validationVM.emotionQuestions[validationVM.currentEmotionIndex].score == option.score ? Color.themePrimary : Color.gray.opacity(0.5))
                     }
                 }
                 .foregroundColor(Color.themeBackground)

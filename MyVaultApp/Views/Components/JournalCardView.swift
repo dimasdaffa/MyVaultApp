@@ -21,11 +21,6 @@ struct JournalCardView: View {
                     Spacer()
                     Image(systemName: "square.and.pencil")
                 }
-//                HStack{
-//                    Image(systemName: "link")
-//                    Text("http://foot.com/nb740")
-//                        .underline()
-//                }
             }
             .font(.system(size: 27))
             

@@ -9,28 +9,11 @@ import SwiftUI
 import SwiftData
 
 struct CreateItemView: View {
-    enum Currency {
-        case rm
-        case idr
-        case usd
-    }
-    
     @Binding var navPath: NavigationPath
     
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var journalVM: JournalViewModel
-    
-    @State private var selectedCurrency: Currency = .idr
-    @State private var itemTitle: String = ""
-    @State private var itemPrice: String = ""
-    @State private var itemLink: String = ""
-    
-    // Form is only valid if BOTH Title and Price are filled out
-    var isFormValid: Bool {
-        let isTitleValid = !itemTitle.trimmingCharacters(in: .whitespaces).isEmpty
-        let isPriceValid = !itemPrice.trimmingCharacters(in: .whitespaces).isEmpty && itemPrice != "0"
-        return isTitleValid && isPriceValid
-    }
+    @StateObject private var viewModel = CreateItemViewModel()
     
     var body: some View {
         VStack {
@@ -69,7 +52,7 @@ struct CreateItemView: View {
                             .bold()
                         Spacer()
                     }
-                    TextField("What's catching your eye?", text: $itemTitle)
+                    TextField("What's catching your eye?", text: $viewModel.itemTitle)
                         .padding(19)
                         .background(Color.themeCard)
                         .cornerRadius(42)
@@ -92,15 +75,13 @@ struct CreateItemView: View {
                         HStack{
                             Image(systemName: "dollarsign")
                                 .font(.system(size: 20))
-                            TextField("0", text: $itemPrice)
+                            TextField("0", text: $viewModel.itemPrice)
                                 .keyboardType(.numberPad)
-                                .onChange(of: itemPrice) { newValue in
-                                    // Format number
-                                    itemPrice = formatCurrency(newValue, currency: selectedCurrency)
+                                .onChange(of: viewModel.itemPrice) { newValue in
+                                    viewModel.onPriceChanged(newValue)
                                 }
-                                .onChange(of: selectedCurrency) { _ in
-                                    // Reformat when user change currency
-                                    itemPrice = formatCurrency(itemPrice, currency: selectedCurrency)
+                                .onChange(of: viewModel.selectedCurrency) { _ in
+                                    viewModel.onCurrencyChanged()
                                 }
                         }
                         .frame(maxWidth: 400)
@@ -109,15 +90,11 @@ struct CreateItemView: View {
                         .cornerRadius(42)
                         
                         HStack{
-                            Picker("Currency", selection: $selectedCurrency) {
-                                Text("RM")
-                                    .tag(Currency.rm)
-                                
-                                Text("IDR")
-                                    .tag(Currency.idr)
-                                
-                                Text("USD")
-                                    .tag(Currency.usd)
+                            Picker("Currency", selection: $viewModel.selectedCurrency) {
+                                ForEach(Currency.allCases) { currency in
+                                    Text(currency.rawValue)
+                                        .tag(currency)
+                                }
                             }
                         }
                         .frame(maxWidth: 100)
@@ -139,7 +116,7 @@ struct CreateItemView: View {
                     HStack{
                         Image(systemName: "link")
                             .font(.system(size: 20))
-                        TextField("http://...", text: $itemLink)
+                        TextField("http://...", text: $viewModel.itemLink)
                             .keyboardType(.URL)
                             .autocapitalization(.none)
                         
@@ -155,7 +132,9 @@ struct CreateItemView: View {
             Spacer()
             
             Button{
-                saveItem()
+                if viewModel.saveItem(modelContext: modelContext, journalVM: journalVM) != nil {
+                    navPath.append("FirstPage")
+                }
             } label: {
                 Text("START")
                     .font(.title3)
@@ -164,51 +143,16 @@ struct CreateItemView: View {
                     .frame(width: 350, height: 62)
                     .background(
                         RoundedRectangle(cornerRadius: 40)
-                            .fill(isFormValid ? Color.themePrimary : Color.gray.opacity(0.3))
+                            .fill(viewModel.isFormValid ? Color.themePrimary : Color.gray.opacity(0.3))
                     )
                     .glassEffect()
-                    .shadow(color: isFormValid ? Color.themePrimary.opacity(1) : Color.clear, radius: 10, x: 0, y: 5)
+                    .shadow(color: viewModel.isFormValid ? Color.themePrimary.opacity(1) : Color.clear, radius: 10, x: 0, y: 5)
             }
-            .disabled(!isFormValid)
+            .disabled(!viewModel.isFormValid)
             .background(Color.themeBackground)
         }
         .navigationTitle("New Entry")
         .toolbar(.hidden, for: .tabBar)
-    }
-    
-    private func saveItem() {
-        let target = Date().addingTimeInterval(30)
-        let currencyString = String(describing: selectedCurrency).uppercased()
-        
-        let newItem = VaultItem(
-            name: itemTitle,
-            price: itemPrice,
-            currency: currencyString,
-            link: itemLink,
-            targetDate: target
-        )
-        
-        journalVM.activeItem = newItem
-        
-        // 3. Force the user into the Journal Questions
-        navPath.append("FirstPage")
-    }
-    
-    private func formatCurrency(_ value: String, currency: Currency) -> String {
-        let numbersOnly = value.filter { "0123456789".contains($0) }
-        guard let number = Int(numbersOnly) else { return "" }
-        
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        
-        switch currency {
-        case .idr:
-            formatter.groupingSeparator = "." // IDR
-        case .usd, .rm:
-            formatter.groupingSeparator = "," // USD/RM
-        }
-        
-        return formatter.string(from: NSNumber(value: number)) ?? ""
     }
 }
 

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct FinanceQuestionView: View {
     @Binding var navPath: NavigationPath
-    @State private var answer: String = ""
     @EnvironmentObject var validationVM: ValidationViewModel
     
     var body: some View {
@@ -44,15 +43,14 @@ struct FinanceQuestionView: View {
                 Spacer()
                 
                 VStack(spacing: 15){
-                    ForEach(["Yes", "No"], id: \.self) { option in
+                    ForEach(QuestionsData.financeOptions) { option in
                         Button(action: {
-                            // Simpan jawaban "Yes" atau "No"
-                            validationVM.financeQuestions[validationVM.currentFinanceIndex].answer = option
+                            validationVM.financeQuestions[validationVM.currentFinanceIndex].answer = option.value
                         }) {
-                            Text(option)
+                            Text(option.value)
                                 .frame(maxWidth: .infinity)
                         }
-                        .tint(validationVM.financeQuestions[validationVM.currentFinanceIndex].answer == option ? Color.themePrimary : Color.gray.opacity(0.5))
+                        .tint(validationVM.financeQuestions[validationVM.currentFinanceIndex].answer == option.value ? Color.themePrimary : Color.gray.opacity(0.5))
                     }
                 }
                 .foregroundColor(Color.themeBackground)

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Combine
 import SwiftData
 
 struct TimeoutView: View {
@@ -15,28 +14,25 @@ struct TimeoutView: View {
     
     @Environment(\.modelContext) private var modelContext
     
-    var item: VaultItem
-    
-    // THE TIMER STATES
-    @State private var isTimerFinished: Bool = false
-    @State private var timeRemaining: TimeInterval = 0
+    @StateObject private var viewModel: TimeoutViewModel
+
     @State private var showJournalSheet = false
     @State private var showDeleteAlert = false
-    
-    // TIME FORMATTING HELPERS
-    var hours: String { String(format: "%02d", Int(timeRemaining) / 3600) }
-    var minutes: String { String(format: "%02d", (Int(timeRemaining) % 3600) / 60) }
-    var seconds: String { String(format: "%02d", Int(timeRemaining) % 60) }
+
+    init(navPath: Binding<NavigationPath>, item: VaultItem) {
+        self._navPath = navPath
+        self._viewModel = StateObject(wrappedValue: TimeoutViewModel(item: item))
+    }
     
     var body: some View {
         VStack {
             HStack {
                 VStack(alignment: .leading, spacing: -15) {
                     HStack {
-                        Text(isTimerFinished ? "Time" : "Cooling")
+                        Text(viewModel.isTimerFinished ? "Time" : "Cooling")
                             .font(.system(size: 45))
                             .bold()
-                        Text(isTimerFinished ? "Out." : "Down.")
+                        Text(viewModel.isTimerFinished ? "Out." : "Down.")
                             .font(.system(size: 45))
                             .bold()
                             .foregroundColor(Color.themePrimary)
@@ -48,7 +44,7 @@ struct TimeoutView: View {
             
             HStack {
                 VStack(alignment: .leading) {
-                    if isTimerFinished {
+                    if viewModel.isTimerFinished {
                         Text("Review your mood and your bank")
                             .font(.system(size: 19))
                             .fontWeight(.light)
@@ -81,7 +77,7 @@ struct TimeoutView: View {
                         .bold()
                     Spacer()
                 }
-                TextField("", text: .constant(item.name))
+                TextField("", text: .constant(viewModel.item.name))
                     .foregroundColor(.primary)
                     .disabled(true)
                     .padding(19)
@@ -106,7 +102,7 @@ struct TimeoutView: View {
                     HStack {
                         Image(systemName: "dollarsign")
                             .font(.system(size: 20))
-                        TextField("", text: .constant(item.price))
+                        TextField("", text: .constant(viewModel.item.price))
                             .disabled(true)
                             .foregroundColor(.primary)
                     }
@@ -116,7 +112,7 @@ struct TimeoutView: View {
                     .cornerRadius(42)
                     
                     HStack {
-                        Text(item.currency)
+                        Text(viewModel.item.currency)
                             .font(.system(size: 20))
                             .foregroundColor(.primary)
                             .disabled(true)
@@ -140,7 +136,7 @@ struct TimeoutView: View {
                 HStack {
                     Image(systemName: "link")
                         .font(.system(size: 20))
-                    TextField("", text: .constant(item.link.isEmpty ? "No link provided" : item.link))
+                    TextField("", text: .constant(viewModel.item.link.isEmpty ? "No link provided" : viewModel.item.link))
                         .disabled(true)
                         .foregroundColor(.primary)
                 }
@@ -154,12 +150,12 @@ struct TimeoutView: View {
             HStack {
                 Spacer()
                 Button {
-                    journalVM.loadItem(item)
+                    journalVM.loadItem(viewModel.item)
                     showJournalSheet = true
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "doc.text.magnifyingglass")
-                        Text(isTimerFinished ? "Read Initial Thoughts" : "Review & Edit Thoughts")
+                        Text(viewModel.isTimerFinished ? "Read Initial Thoughts" : "Review & Edit Thoughts")
                     }
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(Color.themePrimary)
@@ -178,11 +174,11 @@ struct TimeoutView: View {
                     .fontWeight(.medium)
                     .foregroundColor(.gray)
                 HStack(spacing: 0) {
-                    Text("\(hours):")
+                    Text("\(viewModel.hours):")
                         .foregroundStyle(Color.themeBackground)
-                    Text("\(minutes)")
-                        .foregroundStyle(isTimerFinished ? Color.themePrimary : Color.themeBackground)
-                    Text(":\(seconds)")
+                    Text("\(viewModel.minutes)")
+                        .foregroundStyle(viewModel.isTimerFinished ? Color.themePrimary : Color.themeBackground)
+                    Text(":\(viewModel.seconds)")
                         .foregroundStyle(Color.themeBackground)
                 }
                 .font(.system(size: 58))
@@ -201,31 +197,26 @@ struct TimeoutView: View {
             } label: {
                 Text("Validate Answer")
                     .fontWeight(.medium)
-                    .foregroundColor(isTimerFinished ? .white : .gray)
+                    .foregroundColor(viewModel.isTimerFinished ? .white : .gray)
                     .frame(width: 350, height: 62)
                     .background(
                         RoundedRectangle(cornerRadius: 40)
-                            .fill(isTimerFinished ? Color.themePrimary : Color.gray.opacity(0.3))
+                            .fill(viewModel.isTimerFinished ? Color.themePrimary : Color.gray.opacity(0.3))
                     )
-                    .shadow(color: isTimerFinished ? Color.themePrimary.opacity(0.8) : Color.clear, radius: 10, x: 0, y: 5)
+                    .shadow(color: viewModel.isTimerFinished ? Color.themePrimary.opacity(0.8) : Color.clear, radius: 10, x: 0, y: 5)
             }
             .background(Color.themeBackground)
-            .disabled(!isTimerFinished)
+            .disabled(!viewModel.isTimerFinished)
             
         }
-        .navigationTitle(isTimerFinished ? "Validation" : "Cooling Down")
+        .navigationTitle(viewModel.isTimerFinished ? "Validation" : "Cooling Down")
         .sheet(isPresented: $showJournalSheet) {
             NavigationStack {
-                ReviewJournalView(navPath: $navPath, isPresentedAsSheet: true, canEdit: !isTimerFinished)
+                ReviewJournalView(navPath: $navPath, isPresentedAsSheet: true, canEdit: !viewModel.isTimerFinished)
             }
             .environmentObject(journalVM)
         }
-        .onAppear {
-            updateTimer()
-        }
-        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-            updateTimer()
-        }
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -239,28 +230,13 @@ struct TimeoutView: View {
         .alert("Discard Item", isPresented: $showDeleteAlert) {
             Button("Delete", role: .destructive) {
                 // Delete it permanently from SwiftData
-                modelContext.delete(item)
+                modelContext.delete(viewModel.item)
                 // Pop back to the Dashboard
                 navPath.removeLast()
             }
             Button("Cancel", role: .cancel) { }
         } message: {
             Text("Are you sure you want to remove this item from your vault? This action cannot be undone.")
-        }
-    }
-    
-    // ENGINE LOGIC
-    private func updateTimer() {
-        if isTimerFinished { return }
-        
-        let remaining = item.targetDate.timeIntervalSince(Date())
-        
-        if remaining > 0 {
-            timeRemaining = remaining
-            isTimerFinished = false
-        } else {
-            timeRemaining = 0
-            isTimerFinished = true
         }
     }
 }
