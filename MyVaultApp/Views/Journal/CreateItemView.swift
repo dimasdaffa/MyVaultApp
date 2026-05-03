@@ -177,7 +177,7 @@ struct CreateItemView: View {
     }
     
     private func saveItem() {
-        let target = Date().addingTimeInterval(15)
+        let target = Date().addingTimeInterval(30)
         let currencyString = String(describing: selectedCurrency).uppercased()
         
         let newItem = VaultItem(
