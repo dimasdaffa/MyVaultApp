@@ -150,6 +150,7 @@ struct TimeoutView: View {
             HStack {
                 Spacer()
                 Button {
+                    journalVM.loadItem(item)
                     showJournalSheet = true
                 } label: {
                     HStack(spacing: 4) {

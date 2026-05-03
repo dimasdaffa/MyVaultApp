@@ -34,23 +34,36 @@ class JournalViewModel: ObservableObject{
         }
     }
     
-    // THIS JUST SAVES THE DATA (Call this when they finish the questions)
+    // LOAD THE ITEM'S ANSWERS INTO THE VIEW MODEL
+    func loadItem(_ item: VaultItem) {
+        self.activeItem = item
+        self.currentIndex = 0 // Reset to first question just in case
+        
+        // Decode the JSON string back into our question array
+        if let data = item.emotionAnswer.data(using: .utf8),
+           let loadedAnswers = try? JSONDecoder().decode([String].self, from: data) {
+            for i in 0..<min(questions.count, loadedAnswers.count) {
+                questions[i].answer = loadedAnswers[i]
+            }
+        } else {
+            // Fallback if empty
+            for i in 0..<questions.count {
+                questions[i].answer = ""
+            }
+        }
+    }
+    
+    // SAVE THE ANSWERS AS A JSON STRING
     func lockInJournalAnswers() {
         guard let item = activeItem else { return }
         
-        var combinedJournalEntry = ""
-        
-        for (index, question) in questions.enumerated() {
-            if !question.answer.trimmingCharacters(in: .whitespaces).isEmpty {
-                combinedJournalEntry += "Q\(index + 1): \(question.text)\n"
-                combinedJournalEntry += "A: \(question.answer)\n\n"
-            }
+        let answers = questions.map { $0.answer }
+        if let data = try? JSONEncoder().encode(answers),
+           let jsonString = String(data: data, encoding: .utf8) {
+            item.emotionAnswer = jsonString
         }
-        
-        item.emotionAnswer = combinedJournalEntry.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    // THIS CLEARS THE DATA (Call this ONLY when leaving the Review screen to go home)
     func resetJournal() {
         currentIndex = 0
         for i in 0..<questions.count {

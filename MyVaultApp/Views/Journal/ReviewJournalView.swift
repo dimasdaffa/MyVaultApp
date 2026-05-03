@@ -51,7 +51,7 @@ struct ReviewJournalView: View {
                                 if isPresentedAsSheet {
                                     dismiss()
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        navPath.append("QuestionJournal")
+                                        navPath.append("FirstPage")
                                     }
                                 } else {
                                     navPath.removeLast()
@@ -104,9 +104,12 @@ struct ReviewJournalView: View {
                         // 1. COMBINE THE JOURNAL ANSWERS INTO THE ITEM
                         journalVM.lockInJournalAnswers()
                         
-                        // 2. NOW WE PERMANENTLY SAVE IT TO SWIFTDATA!
                         if let finalItemToSave = journalVM.activeItem {
-                            modelContext.insert(finalItemToSave)
+                            // Only insert into SwiftData if it's a BRAND NEW item.
+                            // If it's an existing item being edited, SwiftData auto-saves it automatically
+                            if finalItemToSave.modelContext == nil {
+                                modelContext.insert(finalItemToSave)
+                            }
                         }
                         
                         // 3. WIPE THE JOURNAL CLEAN FOR THE NEXT TIME
