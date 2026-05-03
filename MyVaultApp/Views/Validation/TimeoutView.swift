@@ -7,10 +7,13 @@
 
 import SwiftUI
 import Combine
+import SwiftData
 
 struct TimeoutView: View {
     @Binding var navPath: NavigationPath
     @EnvironmentObject var journalVM: JournalViewModel
+    
+    @Environment(\.modelContext) private var modelContext
     
     var item: VaultItem
     
@@ -18,6 +21,7 @@ struct TimeoutView: View {
     @State private var isTimerFinished: Bool = false
     @State private var timeRemaining: TimeInterval = 0
     @State private var showJournalSheet = false
+    @State private var showDeleteAlert = false
     
     // TIME FORMATTING HELPERS
     var hours: String { String(format: "%02d", Int(timeRemaining) / 3600) }
@@ -219,15 +223,34 @@ struct TimeoutView: View {
         .onAppear {
             updateTimer()
         }
-        // Define the timer directly in the modifier
         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
             updateTimer()
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    showDeleteAlert = true
+                } label: {
+                    Image(systemName: "trash")
+                        .foregroundColor(.themePrimary)
+                }
+            }
+        }
+        .alert("Discard Item", isPresented: $showDeleteAlert) {
+            Button("Delete", role: .destructive) {
+                // Delete it permanently from SwiftData
+                modelContext.delete(item)
+                // Pop back to the Dashboard
+                navPath.removeLast()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Are you sure you want to remove this item from your vault? This action cannot be undone.")
         }
     }
     
     // ENGINE LOGIC
     private func updateTimer() {
-        // Don't waste CPU cycles calculating if we are already at 0
         if isTimerFinished { return }
         
         let remaining = item.targetDate.timeIntervalSince(Date())
@@ -243,6 +266,6 @@ struct TimeoutView: View {
 }
 
 #Preview {
-    TimeoutView(navPath: .constant(NavigationPath()), item: VaultItem(name: "New Balance 740", price: "1.740.000", targetDate: Date().addingTimeInterval(15)))
+    TimeoutView(navPath: .constant(NavigationPath()), item: VaultItem(name: "New Balance 740", price: "1.740.000", targetDate: Date().addingTimeInterval(172000)))
         .environmentObject(JournalViewModel())
 }
