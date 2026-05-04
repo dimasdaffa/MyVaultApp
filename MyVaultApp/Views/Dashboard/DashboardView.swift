@@ -49,6 +49,7 @@ struct DashboardView: View {
                 // 3. Ask the ViewModel to process the raw SwiftData and pass it to the CardView
                 let slots = dashboardVM.processAndSortItems(vaultItems)
                 CardView(navPath: $navPath, itemsForUI: slots, viewModel: dashboardVM)
+                    .padding(.top, 8)
                 
                 HStack{
                     Spacer()
@@ -67,7 +68,7 @@ struct DashboardView: View {
                 .padding(.horizontal)
                 Spacer()
             }
-            .background(Color.themeBackground.ignoresSafeArea())
+            .background(Color.themeBackground)
             // 4. Every time the clock ticks, check if we need to show the red alert text
             .onReceive(dashboardVM.$currentTime) { _ in
                 dashboardVM.checkAlertStatus(items: vaultItems)

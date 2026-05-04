@@ -19,6 +19,7 @@ struct CardView: View {
     @Binding var navPath: NavigationPath
     var itemsForUI: [VaultItem?]
     @ObservedObject var viewModel: DashboardViewModel
+    @State private var cardsDealt: Bool = false
     
     var body: some View {
         VStack(spacing: -150) {
@@ -87,8 +88,18 @@ struct CardView: View {
                     .background(UnevenRoundedRectangle(bottomLeadingRadius: 123).fill(bgColor))
                 }
                 .buttonStyle(SolidPressButtonStyle())
+                .offset(y: cardsDealt ? 0 : -600)
+                .animation(
+                    .spring(response: 0.95, dampingFraction: 1)
+                        .delay(Double(index) * 0.15),
+                    value: cardsDealt
+                )
                 .zIndex(Double(3 - index))
             }
+        }
+        .clipped()
+        .onAppear {
+            cardsDealt = true
         }
     }
 }
