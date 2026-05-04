@@ -71,6 +71,7 @@ struct EmotionQuestionView: View {
         .padding(.bottom, -10)
         
         .navigationTitle("Validation")
+        .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

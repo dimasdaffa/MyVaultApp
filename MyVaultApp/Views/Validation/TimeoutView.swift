@@ -11,6 +11,7 @@ import SwiftData
 struct TimeoutView: View {
     @Binding var navPath: NavigationPath
     @EnvironmentObject var journalVM: JournalViewModel
+    @EnvironmentObject var validationVM: ValidationViewModel
     
     @Environment(\.modelContext) private var modelContext
     
@@ -193,6 +194,7 @@ struct TimeoutView: View {
             .padding(.horizontal, 30)
             
             Button {
+                validationVM.startValidation(for: viewModel.item)
                 navPath.append("EmotionQuestion")
             } label: {
                 Text("Validate Answer")

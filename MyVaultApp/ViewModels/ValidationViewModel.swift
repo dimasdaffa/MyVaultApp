@@ -8,6 +8,8 @@
 import Combine
 
 class ValidationViewModel: ObservableObject {
+    @Published var activeItem: VaultItem?
+    
     @Published var emotionQuestions: [EmotionQuestion] = [
         EmotionQuestion(text: "I feel this price is a \"special deal\" that won't last."),
         EmotionQuestion(text: "The current discount/offer is the primary reason I want it now."),
@@ -72,5 +74,19 @@ class ValidationViewModel: ObservableObject {
             currentFinanceIndex += 1
         }
     }
+    
+    func startValidation(for item: VaultItem) {
+            self.activeItem = item
+            self.currentEmotionIndex = 0
+            self.currentFinanceIndex = 0
+            
+            // Reset all previous scores so it's a fresh quiz
+            for i in 0..<emotionQuestions.count {
+                emotionQuestions[i].score = nil
+            }
+            for i in 0..<financeQuestions.count {
+                financeQuestions[i].answer = nil
+            }
+        }
 }
 
