@@ -10,7 +10,6 @@ import SwiftData
 
 struct DashboardView: View {
     @State private var navPath = NavigationPath()
-    @State private var isPulsing = false
     
     @StateObject private var dashboardVM = DashboardViewModel()
     @StateObject private var validationVM = ValidationViewModel()
@@ -54,15 +53,17 @@ struct DashboardView: View {
                 HStack{
                     Spacer()
                     Text("Validate your decision!")
-                        .font(.system(size: 8))
+                        .font(.system(size: 15))
                         .fontWeight(.light)
                         .foregroundStyle(Color.themeRed)
-                        .opacity(dashboardVM.hasReadyItem ? (isPulsing ? 1.0 : 0.4) : 0.0)
-                        .scaleEffect(dashboardVM.hasReadyItem && isPulsing ? 1.05 : 1.0)
+                        .phaseAnimator([false, true]) { content, phase in
+                            content
+                                .opacity(dashboardVM.hasReadyItem ? (phase ? 1.0 : 0.4) : 0.0)
+                        } animation: { phase in
+                            .easeInOut(duration: 0.8)
+                        }
                         .onAppear {
-                            withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
-                                isPulsing = true
-                            }
+                            dashboardVM.checkAlertStatus(items: vaultItems) 
                         }
                 }
                 .padding(.horizontal)
@@ -72,6 +73,10 @@ struct DashboardView: View {
             // 4. Every time the clock ticks, check if we need to show the red alert text
             .onReceive(dashboardVM.$currentTime) { _ in
                 dashboardVM.checkAlertStatus(items: vaultItems)
+            }
+            // Check the data the exact millisecond SwiftData finishes loading it
+            .onChange(of: vaultItems, initial: true) { oldValue, newValue in
+                dashboardVM.checkAlertStatus(items: newValue)
             }
             .navigationDestination(for: String.self) { route in
                 switch route {
@@ -102,7 +107,39 @@ struct DashboardView: View {
     }
 }
 
-#Preview {
+// MARK: - Previews
+
+@MainActor
+let mockDashboardContainer: ModelContainer = {
+    do {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: VaultItem.self, configurations: config)
+        
+        // Item 1: Actively cooling down (target date in the future)
+        let mock1 = VaultItem(name: "Apple Vision Pro", price: "60.000.000", targetDate: Date().addingTimeInterval(86400)) // 1 day from now
+        mock1.currency = "IDR"
+        mock1.status = .coolingDown
+        
+        // Item 2: Ready to validate (timer finished) 
+        let mock2 = VaultItem(name: "New Balance 990v6", price: "4.500.000", targetDate: Date().addingTimeInterval(-3600)) // 1 hour ago
+        mock2.currency = "IDR"
+        mock2.status = .coolingDown 
+        
+        container.mainContext.insert(mock1) 
+        container.mainContext.insert(mock2)
+        
+        return container
+    } catch {
+        fatalError("Failed to create dashboard preview container")
+    }
+}()
+
+#Preview("Populated Dashboard") {
+    DashboardView()
+        .modelContainer(mockDashboardContainer)
+}
+
+#Preview("Empty Dashboard") {
     DashboardView()
         .modelContainer(for: VaultItem.self, inMemory: true)
 }

@@ -22,7 +22,7 @@ struct CardView: View {
     @State private var cardsDealt: Bool = false
     
     var body: some View {
-        VStack(spacing: -150) {
+        VStack(spacing: -170) {
             
             // 2. Loop through the exactly 3 slots
             ForEach(Array(itemsForUI.enumerated()), id: \.offset) { index, item in
@@ -30,7 +30,7 @@ struct CardView: View {
                 let isTop = (index == 0)
                 let bgColor = isTop ? Color.themeBackground : (index == 1 ? Color.themePrimary : Color.themeBlack)
                 let textColor = isTop ? Color.themeBlack : Color.white
-                let paddingTop: CGFloat = isTop ? 40 : 170
+                let paddingTop: CGFloat = isTop ? 40 : 190
                 
                 Button {
                     // If it's nil (Empty Slot), go to Create
@@ -104,7 +104,33 @@ struct CardView: View {
     }
 }
 
-// 3. For the Preview to work, we just pass an empty array of 3 nils
-#Preview {
-    CardView(navPath: .constant(NavigationPath()), itemsForUI: [nil, nil, nil], viewModel: DashboardViewModel())
+
+// MARK: - Previews
+
+#Preview("Empty Cards") {
+    CardView(
+        navPath: .constant(NavigationPath()),
+        itemsForUI: [nil, nil, nil],
+        viewModel: DashboardViewModel()
+    )
+    .background(Color.themeBackground)
+}
+
+#Preview("Populated Cards") {
+    let vm = DashboardViewModel()
+    
+    // Item 1: Actively cooling down (24h left)
+    let mock1 = VaultItem(name: "Apple Vision Pro", price: "60.000.000", targetDate: Date().addingTimeInterval(86400))
+    mock1.currency = "IDR"
+    
+    // Item 2: Timer finished (1 hour ago)
+    let mock2 = VaultItem(name: "New Balance 990v6", price: "4.500.000", targetDate: Date().addingTimeInterval(-3600))
+    mock2.currency = "IDR"
+    
+    return CardView(
+        navPath: .constant(NavigationPath()),
+        itemsForUI: [nil, mock1, mock2],
+        viewModel: vm
+    )
+    .background(Color.themeBackground)
 }

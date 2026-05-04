@@ -34,7 +34,7 @@ final class CreateItemViewModel: ObservableObject {
 	func saveItem(modelContext: ModelContext, journalVM: JournalViewModel) -> VaultItem? {
 		guard isFormValid else { return nil }
 
-		let target = Date().addingTimeInterval(30)
+		let target = Date().addingTimeInterval(60)
 		let newItem = VaultItem(
 			name: itemTitle,
 			price: itemPrice,

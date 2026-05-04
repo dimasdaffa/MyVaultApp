@@ -212,6 +212,7 @@ struct TimeoutView: View {
             
         }
         .navigationTitle(viewModel.isTimerFinished ? "Validation" : "Cooling Down")
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showJournalSheet) {
             NavigationStack {
                 ReviewJournalView(navPath: $navPath, isPresentedAsSheet: true, canEdit: !viewModel.isTimerFinished)
@@ -243,7 +244,24 @@ struct TimeoutView: View {
     }
 }
 
-#Preview {
-    TimeoutView(navPath: .constant(NavigationPath()), item: VaultItem(name: "New Balance 740", price: "1.740.000", targetDate: Date().addingTimeInterval(172000)))
-        .environmentObject(JournalViewModel())
+#Preview("Cooling Down") {
+    let item = VaultItem(name: "New Balance 740", price: "1.740.000", targetDate: Date().addingTimeInterval(172000)) // ~2 days left
+    item.currency = "IDR"
+    
+    return NavigationStack {
+        TimeoutView(navPath: .constant(NavigationPath()), item: item)
+            .environmentObject(JournalViewModel())
+            .environmentObject(ValidationViewModel())
+    }
+}
+
+#Preview("Timeout") {
+    let item = VaultItem(name: "Apple Vision Pro", price: "60.000.000", targetDate: Date().addingTimeInterval(-3600)) // 1 hour ago
+    item.currency = "IDR"
+    
+    return NavigationStack {
+        TimeoutView(navPath: .constant(NavigationPath()), item: item)
+            .environmentObject(JournalViewModel())
+            .environmentObject(ValidationViewModel())
+    }
 }
