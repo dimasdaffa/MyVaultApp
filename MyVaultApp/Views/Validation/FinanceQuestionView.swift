@@ -20,7 +20,7 @@ struct FinanceQuestionView: View {
             )
             VStack(spacing: 20){
                 HStack(alignment: .lastTextBaseline,spacing: 0){
-                    Text("\(validationVM.currentTotalProgress)/")
+                    Text("\(12 + validationVM.currentFinanceIndex + 1)/")
                         .font(.system(size: 70))
                         .bold()
                         .foregroundStyle(validationVM.currentFinanceIndex == 1 ? Color.themePrimary : Color.black)
@@ -75,32 +75,40 @@ struct FinanceQuestionView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    // LOGIKA RESULT
-                    if validationVM.currentFinanceIndex == 1 {
-                        // Jika sudah pertanyaan terakhir (Q2), lempar ke Result
-                        if validationVM.finalDecisionIsBuy {
+                    // Check if we are on the very last Finance question
+                    if validationVM.currentFinanceIndex == validationVM.financeQuestions.count - 1 {
+                        
+                        let isApprovedToBuy = validationVM.finalizeValidation()
+                        
+                        if isApprovedToBuy {
                             navPath.append("BuyResult")
                         } else {
                             navPath.append("NoBuyResult")
                         }
+                        
                     } else {
-                        // Jika masih Q1, lanjut ke Q2
+                        // If not the last question, just go to the next one
                         withAnimation(.spring()) {
                             validationVM.nextFinanceQuestion()
                         }
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Text(validationVM.currentFinanceIndex == 1 ? "Finish" : "Next")
+                        // Change text to "Finish" if it's the last question
+                        Text(validationVM.currentFinanceIndex == validationVM.financeQuestions.count - 1 ? "Finish" : "Next")
                             .fontWeight(.semibold)
-                        Image(systemName: "chevron.right")
+                        
+                        // Only show the chevron arrow if it's NOT the last question
+                        if validationVM.currentFinanceIndex < validationVM.financeQuestions.count - 1 {
+                            Image(systemName: "chevron.right")
+                        }
                     }
                     .font(.system(size: 16))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                 }
-                // Matikan tombol NEXT jika belum dijawab
-                .disabled(validationVM.financeQuestions[validationVM.currentFinanceIndex].answer == nil)
+                // Disable button if no answer is selected
+                .disabled(validationVM.financeQuestions[validationVM.currentFinanceIndex].answer?.isEmpty ?? true)
             }
         }
         

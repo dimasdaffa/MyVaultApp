@@ -76,17 +76,35 @@ class ValidationViewModel: ObservableObject {
     }
     
     func startValidation(for item: VaultItem) {
-            self.activeItem = item
-            self.currentEmotionIndex = 0
-            self.currentFinanceIndex = 0
-            
-            // Reset all previous scores so it's a fresh quiz
-            for i in 0..<emotionQuestions.count {
-                emotionQuestions[i].score = nil
-            }
-            for i in 0..<financeQuestions.count {
-                financeQuestions[i].answer = nil
-            }
+        self.activeItem = item
+        self.currentEmotionIndex = 0
+        self.currentFinanceIndex = 0
+        
+        // Reset all previous scores so it's a fresh quiz
+        for i in 0..<emotionQuestions.count {
+            emotionQuestions[i].score = nil
         }
+        for i in 0..<financeQuestions.count {
+            financeQuestions[i].answer = nil
+        }
+    }
+    
+    func finalizeValidation() -> Bool {
+        // Ensure we actually have an item loaded
+        guard let item = activeItem else { return false }
+        
+        // Calculate the final decision based on your existing logic
+        let isBuy = finalDecisionIsBuy
+        
+        // Update the item's status in SwiftData
+        if isBuy {
+            item.status = .bought
+        } else {
+            item.status = .saved
+        }
+        
+        // Return the decision to the View for routing
+        return isBuy
+    }
 }
 
