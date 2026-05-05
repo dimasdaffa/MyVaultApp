@@ -99,6 +99,8 @@ struct ReviewJournalView: View {
                             // Only insert into SwiftData if it's a BRAND NEW item.
                             // If it's an existing item being edited, SwiftData auto-saves it automatically
                             if finalItemToSave.modelContext == nil {
+                                // START THE TIMER NOW — cooldown begins from confirm, not from "START"
+                                finalItemToSave.targetDate = Date().addingTimeInterval(60)
                                 modelContext.insert(finalItemToSave)
                             }
                         }

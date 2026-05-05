@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftData
 import Combine
 
 @MainActor
@@ -30,20 +29,27 @@ final class CreateItemViewModel: ObservableObject {
 		itemPrice = formatCurrency(itemPrice, currency: selectedCurrency)
 	}
 
+	/// Create the VaultItem in memory and hand it to the JournalViewModel.
+	/// Nothing is persisted to SwiftData yet — that happens in ReviewJournalView
+	/// only when the user taps the checkmark to confirm.
 	@discardableResult
-	func saveItem(modelContext: ModelContext, journalVM: JournalViewModel) -> VaultItem? {
+	func prepareItem(journalVM: JournalViewModel) -> VaultItem? {
 		guard isFormValid else { return nil }
 
-		let target = Date().addingTimeInterval(60)
+		// Wipe any leftover state from a previous cancelled journal flow
+		journalVM.resetJournal()
+
+		// Don't set the target date yet — the timer will start
+		// when the user actually confirms in ReviewJournalView
+		let placeholder = Date() // temporary, overwritten on confirm
 		let newItem = VaultItem(
 			name: itemTitle,
 			price: itemPrice,
 			currency: selectedCurrency.rawValue,
 			link: itemLink,
-			targetDate: target
+			targetDate: placeholder
 		)
 
-		modelContext.insert(newItem)
 		journalVM.activeItem = newItem
 		return newItem
 	}

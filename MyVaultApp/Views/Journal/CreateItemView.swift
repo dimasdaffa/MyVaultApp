@@ -11,7 +11,6 @@ import SwiftData
 struct CreateItemView: View {
     @Binding var navPath: NavigationPath
     
-    @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var journalVM: JournalViewModel
     @StateObject private var viewModel = CreateItemViewModel()
     
@@ -132,7 +131,7 @@ struct CreateItemView: View {
             Spacer()
             
             Button{
-                if viewModel.saveItem(modelContext: modelContext, journalVM: journalVM) != nil {
+                if viewModel.prepareItem(journalVM: journalVM) != nil {
                     navPath.append("FirstPage")
                 }
             } label: {
