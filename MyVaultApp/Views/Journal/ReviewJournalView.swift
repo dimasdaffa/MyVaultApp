@@ -46,16 +46,7 @@ struct ReviewJournalView: View {
                         
                         Button {
                             if canEdit {
-                                journalVM.currentIndex = index
-                                
-                                if isPresentedAsSheet {
-                                    dismiss()
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        navPath.append("FirstPage")
-                                    }
-                                } else {
-                                    navPath.removeLast()
-                                }
+                                journalVM.startEditing(at: index)
                             }
                         } label: {
                             VStack(alignment: .leading, spacing: 12) {
@@ -125,6 +116,48 @@ struct ReviewJournalView: View {
                     }
                 }
             }
+        }
+        .sheet(item: $journalVM.editingItem) { item in
+            NavigationStack {
+                VStack(alignment: .leading, spacing: 20) {
+                    Text(journalVM.questions[item.index].text)
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundColor(.primary)
+                    
+                    // A nice big text box for them to edit their thoughts
+                    TextEditor(text: $journalVM.draftAnswer)
+                        .padding(15)
+                        .background(Color.themeCard)
+                        .cornerRadius(15)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                        )
+                    
+                    Spacer()
+                }
+                .padding(25)
+                .navigationTitle("Edit Observation")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Cancel") {
+                            journalVM.cancelEdit()
+                        }
+                        .foregroundColor(.gray)
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Save") {
+                            journalVM.saveEdit()
+                        }
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.themePrimary)
+                    }
+                }
+            }
+            // Apple HIG magic: This makes it a half-height sheet that can expand!
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
     }
 }

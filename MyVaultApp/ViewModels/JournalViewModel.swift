@@ -9,6 +9,11 @@ import Combine
 import Foundation
 import SwiftData
 
+struct EditingItem: Identifiable {
+    let id = UUID()
+    let index: Int
+}
+
 class JournalViewModel: ObservableObject{
     @Published var questions: [JournalQuestion] = [
         JournalQuestion(text: "Is this item going to add value to my life?"),
@@ -23,6 +28,10 @@ class JournalViewModel: ObservableObject{
     
     @Published var currentIndex: Int = 0
     @Published var activeItem: VaultItem?
+    
+    // MARK: - Editing State
+    @Published var editingItem: EditingItem? = nil
+    @Published var draftAnswer: String = ""
     
     var totalQuestions: Int { questions.count }
     var currentProgress: Int { currentIndex + 1 }
@@ -51,6 +60,29 @@ class JournalViewModel: ObservableObject{
                 questions[i].answer = ""
             }
         }
+    }
+    
+    // MARK: - Editing Actions
+    
+    /// Begin editing a specific question's answer
+    func startEditing(at index: Int) {
+        draftAnswer = questions[index].answer
+        editingItem = EditingItem(index: index)
+    }
+    
+    /// Save the draft answer back to the question and persist to the VaultItem
+    func saveEdit() {
+        guard let item = editingItem else { return }
+        questions[item.index].answer = draftAnswer
+        editingItem = nil
+        
+        // Auto-persist changes to the VaultItem so they survive dismissal
+        lockInJournalAnswers()
+    }
+    
+    /// Cancel editing without saving
+    func cancelEdit() {
+        editingItem = nil
     }
     
     // SAVE THE ANSWERS AS A JSON STRING

@@ -24,7 +24,7 @@ struct CardView: View {
     var body: some View {
         VStack(spacing: -170) {
             
-            // 2. Loop through the exactly 3 slots
+            // Loop through the exactly 3 slots
             ForEach(Array(itemsForUI.enumerated()), id: \.offset) { index, item in
                 
                 let isTop = (index == 0)
