@@ -29,9 +29,8 @@ final class CreateItemViewModel: ObservableObject {
 		itemPrice = formatCurrency(itemPrice, currency: selectedCurrency)
 	}
 
-	/// Create the VaultItem in memory and hand it to the JournalViewModel.
-	/// Nothing is persisted to SwiftData yet — that happens in ReviewJournalView
-	/// only when the user taps the checkmark to confirm.
+	// Create the VaultItem in memory and hand it to the JournalViewModel.
+	// only when the user taps the checkmark to confirm.
 	@discardableResult
 	func prepareItem(journalVM: JournalViewModel) -> VaultItem? {
 		guard isFormValid else { return nil }

@@ -18,7 +18,7 @@ struct DashboardView: View {
     @Query private var vaultItems: [VaultItem]
     
     var body: some View {
-        NavigationStack (path: $navPath) {
+        NavigationStack (path: $navPath) { 
             VStack () {
                 HStack {
                     Text("MyVault")
@@ -125,7 +125,7 @@ let mockDashboardContainer: ModelContainer = {
         mock2.currency = "IDR"
         mock2.status = .coolingDown 
         
-        container.mainContext.insert(mock1) 
+        container.mainContext.insert(mock1)
         container.mainContext.insert(mock2)
         
         return container

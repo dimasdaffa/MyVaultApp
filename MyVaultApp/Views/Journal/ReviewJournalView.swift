@@ -92,7 +92,7 @@ struct ReviewJournalView: View {
                     Button("Close") { dismiss() }
                 } else {
                     Button {
-                        // 1. COMBINE THE JOURNAL ANSWERS INTO THE ITEM
+                        // COMBINE THE JOURNAL ANSWERS INTO THE ITEM
                         journalVM.lockInJournalAnswers()
                         
                         if let finalItemToSave = journalVM.activeItem {
@@ -105,10 +105,10 @@ struct ReviewJournalView: View {
                             }
                         }
                         
-                        // 3. WIPE THE JOURNAL CLEAN FOR THE NEXT TIME
+                        // WIPE THE JOURNAL CLEAN FOR THE NEXT TIME
                         journalVM.resetJournal()
                         
-                        // 4. POP ALL THE WAY BACK TO DASHBOARD
+                        // POP ALL THE WAY BACK TO DASHBOARD
                         navPath.removeLast(navPath.count)
                     } label: {
                         Image(systemName: "checkmark")
@@ -126,7 +126,6 @@ struct ReviewJournalView: View {
                         .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.primary)
                     
-                    // A nice big text box for them to edit their thoughts
                     TextEditor(text: $journalVM.draftAnswer)
                         .padding(15)
                         .background(Color.themeCard)
@@ -157,7 +156,6 @@ struct ReviewJournalView: View {
                     }
                 }
             }
-            // Apple HIG magic: This makes it a half-height sheet that can expand!
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
