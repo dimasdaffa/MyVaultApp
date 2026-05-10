@@ -17,7 +17,7 @@ struct DashboardView: View {
     
     @Query private var vaultItems: [VaultItem]
     
-    var body: some View {
+    var body: some View { 
         NavigationStack (path: $navPath) { 
             VStack () {
                 HStack {

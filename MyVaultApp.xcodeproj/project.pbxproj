@@ -6,11 +6,27 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		385B8D7B2FB0B50D005CC2F1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 389939A52F94F754007A466D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 389939AC2F94F754007A466D;
+			remoteInfo = MyVaultApp;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		385B8D772FB0B50D005CC2F1 /* MyVaultAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyVaultAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		389939AD2F94F754007A466D /* MyVaultApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyVaultApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		385B8D782FB0B50D005CC2F1 /* MyVaultAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MyVaultAppTests;
+			sourceTree = "<group>";
+		};
 		389939AF2F94F754007A466D /* MyVaultApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = MyVaultApp;
@@ -19,6 +35,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		385B8D742FB0B50D005CC2F1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		389939AA2F94F754007A466D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				389939AF2F94F754007A466D /* MyVaultApp */,
+				385B8D782FB0B50D005CC2F1 /* MyVaultAppTests */,
 				389939AE2F94F754007A466D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				389939AD2F94F754007A466D /* MyVaultApp.app */,
+				385B8D772FB0B50D005CC2F1 /* MyVaultAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +73,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		385B8D762FB0B50D005CC2F1 /* MyVaultAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 385B8D7D2FB0B50D005CC2F1 /* Build configuration list for PBXNativeTarget "MyVaultAppTests" */;
+			buildPhases = (
+				385B8D732FB0B50D005CC2F1 /* Sources */,
+				385B8D742FB0B50D005CC2F1 /* Frameworks */,
+				385B8D752FB0B50D005CC2F1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				385B8D7C2FB0B50D005CC2F1 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				385B8D782FB0B50D005CC2F1 /* MyVaultAppTests */,
+			);
+			name = MyVaultAppTests;
+			packageProductDependencies = (
+			);
+			productName = MyVaultAppTests;
+			productReference = 385B8D772FB0B50D005CC2F1 /* MyVaultAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		389939AC2F94F754007A466D /* MyVaultApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 389939B82F94F755007A466D /* Build configuration list for PBXNativeTarget "MyVaultApp" */;
@@ -80,6 +128,10 @@
 				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					385B8D762FB0B50D005CC2F1 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 389939AC2F94F754007A466D;
+					};
 					389939AC2F94F754007A466D = {
 						CreatedOnToolsVersion = 26.4.1;
 					};
@@ -100,11 +152,19 @@
 			projectRoot = "";
 			targets = (
 				389939AC2F94F754007A466D /* MyVaultApp */,
+				385B8D762FB0B50D005CC2F1 /* MyVaultAppTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		385B8D752FB0B50D005CC2F1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		389939AB2F94F754007A466D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +175,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		385B8D732FB0B50D005CC2F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		389939A92F94F754007A466D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +191,62 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		385B8D7C2FB0B50D005CC2F1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 389939AC2F94F754007A466D /* MyVaultApp */;
+			targetProxy = 385B8D7B2FB0B50D005CC2F1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		385B8D7E2FB0B50D005CC2F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D79M63NF6C;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.academy.dimasdaffa.MyVaultAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyVaultApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MyVaultApp";
+			};
+			name = Debug;
+		};
+		385B8D7F2FB0B50D005CC2F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D79M63NF6C;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.academy.dimasdaffa.MyVaultAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyVaultApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MyVaultApp";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		389939B62F94F755007A466D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -334,6 +456,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		385B8D7D2FB0B50D005CC2F1 /* Build configuration list for PBXNativeTarget "MyVaultAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				385B8D7E2FB0B50D005CC2F1 /* Debug */,
+				385B8D7F2FB0B50D005CC2F1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		389939A82F94F754007A466D /* Build configuration list for PBXProject "MyVaultApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
