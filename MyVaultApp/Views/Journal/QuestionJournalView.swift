@@ -74,6 +74,10 @@ struct QuestionJournalView: View {
         .padding(.bottom, -10)
         .navigationTitle("Journal")
         .navigationBarBackButtonHidden(true)
+        .scrollDismissesKeyboard(.interactively)
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
