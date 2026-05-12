@@ -10,6 +10,7 @@ import SwiftUI
 struct QuestionJournalView: View {
     @Binding var navPath: NavigationPath
     @EnvironmentObject var viewModel: JournalViewModel
+    @State private var showExitAlert = false
     
     // We use a custom binding to read/write directly to the ViewModel's array
     private var currentAnswerBinding: Binding<String> {
@@ -72,8 +73,23 @@ struct QuestionJournalView: View {
         }
         .padding(.bottom, -10)
         .navigationTitle("Journal")
+        .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    if viewModel.currentIndex == 0 {
+                        showExitAlert = true
+                    } else {
+                        withAnimation(.spring()) {
+                            viewModel.previousQuestion()
+                        }
+                    }
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .semibold))
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     if viewModel.isLastQuestion {
@@ -100,6 +116,17 @@ struct QuestionJournalView: View {
                 // Disable button if current answer is empty
                 .disabled(currentAnswerBinding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
+        }
+        .alert("Discard this entry?", isPresented: $showExitAlert) {
+            Button("Keep Editing", role: .cancel) {}
+            Button("Discard", role: .destructive) {
+                viewModel.resetJournal()
+                if !navPath.isEmpty {
+                    navPath.removeLast()
+                }
+            }
+        } message: {
+            Text("Your journal answers will not be saved.")
         }
     }
 }

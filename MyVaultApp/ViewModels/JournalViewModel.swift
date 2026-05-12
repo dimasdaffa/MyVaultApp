@@ -42,6 +42,12 @@ class JournalViewModel: ObservableObject{
             currentIndex += 1
         }
     }
+
+    func previousQuestion() {
+        if currentIndex > 0 {
+            currentIndex -= 1
+        }
+    }
     
     // LOAD THE ITEM'S ANSWERS INTO THE VIEW MODEL
     func loadItem(_ item: VaultItem) {

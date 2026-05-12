@@ -19,34 +19,11 @@ struct DashboardView: View {
     
     var body: some View { 
         NavigationStack (path: $navPath) { 
+            let activeCount = vaultItems.filter { $0.status == .coolingDown || $0.status == .ready }.count
+            let slots = dashboardVM.processAndSortItems(vaultItems)
+
             VStack () {
-                HStack {
-                    Text("MyVault")
-                        .font(Font.largeTitle)
-                        .bold()
-                    Spacer()
-                    
-                    // 2. Disable the + button if they already have 3 active items!
-                    let activeCount = vaultItems.filter { $0.status == .coolingDown || $0.status == .ready }.count
-                    
-                    NavigationLink(value: "CreateItem") {
-                        Image(systemName: "plus")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(activeCount >= 3 ? .white.opacity(0.5) : .white)
-                            .frame(width: 56, height: 56)
-                            .background(activeCount >= 3 ? Color.gray : Color.themePrimary)
-                            .glassEffect()
-                            .tint(activeCount >= 3 ? Color.gray : Color.themePrimary)
-                            .shadow(color: activeCount >= 3 ? Color.clear : Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
-                            .clipShape(Circle())
-                    }
-                    .disabled(activeCount >= 3)
-                }
-                .padding(20)
-                
                 // 3. Ask the ViewModel to process the raw SwiftData and pass it to the CardView
-                let slots = dashboardVM.processAndSortItems(vaultItems)
                 CardView(navPath: $navPath, itemsForUI: slots, viewModel: dashboardVM)
                     .padding(.top, 8)
                 
@@ -78,6 +55,18 @@ struct DashboardView: View {
             .onChange(of: vaultItems, initial: true) { oldValue, newValue in
                 dashboardVM.checkAlertStatus(items: newValue)
             }
+            .navigationTitle("MyVault")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(value: "CreateItem") {
+                        Image(systemName: "plus")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(activeCount >= 3 ? .gray : Color.themePrimary)
+                    }
+                    .disabled(activeCount >= 3)
+                }
+            }
+            
             .navigationDestination(for: String.self) { route in
                 switch route {
                 case "CreateItem":
