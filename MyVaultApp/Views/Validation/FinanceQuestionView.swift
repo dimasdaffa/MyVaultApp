@@ -45,6 +45,7 @@ struct FinanceQuestionView: View {
                 VStack(spacing: 15){
                     ForEach(QuestionsData.financeOptions) { option in
                         Button(action: {
+                            HapticManager.shared.impact(style: .light)
                             validationVM.financeQuestions[validationVM.currentFinanceIndex].answer = option.value
                         }) {
                             Text(option.value)
@@ -75,6 +76,7 @@ struct FinanceQuestionView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
+                    HapticManager.shared.impact(style: .medium)
                     // Check if we are on the very last Finance question
                     if validationVM.currentFinanceIndex == validationVM.financeQuestions.count - 1 {
                         

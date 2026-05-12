@@ -47,6 +47,7 @@ struct EmotionQuestionView: View {
                 VStack(spacing: 15){
                     ForEach(QuestionsData.emotionOptions) { option in
                         Button(action: {
+                            HapticManager.shared.impact(style: .light)
                             validationVM.emotionQuestions[validationVM.currentEmotionIndex].score = option.score
                         }) {
                             Text(option.label)
@@ -76,6 +77,7 @@ struct EmotionQuestionView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
+                    HapticManager.shared.impact(style: .medium)
                     // Jika pertanyaan ke-12 (index 11), pindah ke halaman Finansial
                     if validationVM.currentEmotionIndex == 11 {
                         navPath.append("FinanceQuestion")

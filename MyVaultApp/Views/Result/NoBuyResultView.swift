@@ -88,6 +88,9 @@ struct NoBuyResultView: View {
             }
             .background(Color.themeBackground)
         }
+        .onAppear {
+            HapticManager.shared.impact(style: .heavy)
+        }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
     }

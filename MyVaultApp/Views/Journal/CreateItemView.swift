@@ -132,6 +132,7 @@ struct CreateItemView: View {
                 
                 Button{
                     if viewModel.prepareItem(journalVM: journalVM) != nil {
+                        HapticManager.shared.notification(type: .success)
                         navPath.append("FirstPage")
                     }
                 } label: {

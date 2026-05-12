@@ -92,6 +92,7 @@ struct ReviewJournalView: View {
                     Button("Close") { dismiss() }
                 } else {
                     Button {
+                        HapticManager.shared.notification(type: .success)
                         // COMBINE THE JOURNAL ANSWERS INTO THE ITEM
                         journalVM.lockInJournalAnswers()
                         
