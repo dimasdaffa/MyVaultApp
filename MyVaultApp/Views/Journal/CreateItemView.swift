@@ -77,10 +77,10 @@ struct CreateItemView: View {
                                     .font(.system(size: 20))
                                 TextField("0", text: $viewModel.itemPrice)
                                     .keyboardType(.numberPad)
-                                    .onChange(of: viewModel.itemPrice) { newValue in
+                                    .onChange(of: viewModel.itemPrice) { oldValue, newValue in
                                         viewModel.onPriceChanged(newValue)
                                     }
-                                    .onChange(of: viewModel.selectedCurrency) { _ in
+                                    .onChange(of: viewModel.selectedCurrency) { oldValue, newValue in
                                         viewModel.onCurrencyChanged()
                                     }
                             }
