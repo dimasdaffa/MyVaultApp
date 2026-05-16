@@ -145,7 +145,6 @@ struct CreateItemView: View {
                             RoundedRectangle(cornerRadius: 40)
                                 .fill(viewModel.isFormValid ? Color.themePrimary : Color.gray.opacity(0.3))
                         )
-                        .glassEffect()
                         .shadow(color: viewModel.isFormValid ? Color.themePrimary.opacity(1) : Color.clear, radius: 10, x: 0, y: 5)
                 }
                 .disabled(!viewModel.isFormValid)

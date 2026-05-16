@@ -83,7 +83,6 @@ struct NoBuyResultView: View {
                         RoundedRectangle(cornerRadius: 40)
                             .fill(Color.themePrimary)
                     )
-                    .glassEffect()
                     .shadow(color: Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
             }
             .background(Color.themeBackground)
