@@ -101,6 +101,7 @@ struct ReviewJournalView: View {
                             // If it's an existing item being edited, SwiftData auto-saves it automatically
                             if finalItemToSave.modelContext == nil {
                                 // START THE TIMER NOW — cooldown begins from confirm, not from "START"
+                                // Di production, kita set cooling down menjadi 24 jam (86400 detik)
                                 finalItemToSave.targetDate = Date().addingTimeInterval(60)
                                 modelContext.insert(finalItemToSave)
                             }

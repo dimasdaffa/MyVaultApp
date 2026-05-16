@@ -13,17 +13,14 @@ final class TimeoutViewModel: ObservableObject {
 	@Published var isTimerFinished: Bool = false
 	@Published var timeRemaining: TimeInterval = 0
 
-	let item: VaultItem
+	var item: VaultItem?
 
 	private var timerCancellable: AnyCancellable?
 
-	init(item: VaultItem) {
-		self.item = item
-		updateTimer()
-		startTimer()
-	}
+	init() {}
 
 	deinit {
+		// Membersihkan timer saat view model dihancurkan untuk mencegah memory leak
 		timerCancellable?.cancel()
 	}
 
@@ -31,7 +28,17 @@ final class TimeoutViewModel: ObservableObject {
 	var minutes: String { String(format: "%02d", (Int(timeRemaining) % 3600) / 60) }
 	var seconds: String { String(format: "%02d", Int(timeRemaining) % 60) }
 
+	// Mengatur item dan memulai timer saat view muncul
+	func setup(with vaultItem: VaultItem) {
+		// Hindari setup ulang jika item sudah ada
+		if self.item != nil { return }
+		self.item = vaultItem
+		updateTimer()
+		startTimer()
+	}
+
 	func updateTimer() {
+		guard let item = item else { return }
 		if isTimerFinished { return }
 
 		let remaining = item.targetDate.timeIntervalSince(Date())

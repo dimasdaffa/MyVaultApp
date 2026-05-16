@@ -7,13 +7,14 @@
 
 import SwiftUI
 import SwiftData
+import Combine
 
 struct DashboardView: View {
     @State private var navPath = NavigationPath()
     
     @StateObject private var dashboardVM = DashboardViewModel()
-    @StateObject private var validationVM = ValidationViewModel()
-    @StateObject private var journalVM = JournalViewModel()
+    @EnvironmentObject private var validationVM: ValidationViewModel
+    @EnvironmentObject private var journalVM: JournalViewModel
     
     @Query private var vaultItems: [VaultItem]
     
@@ -47,8 +48,9 @@ struct DashboardView: View {
                 Spacer()
             }
             .background(Color.themeBackground)
-            // 4. Every time the clock ticks, check if we need to show the red alert text
-            .onReceive(dashboardVM.$currentTime) { _ in
+            // 4. Timer ini tidak terikat pada @State. Ia akan berdetak di background setiap 1 detik.
+            // dashboardVM.checkAlertStatus() hanya akan memicu re-render jika `hasReadyItem` atau `zeroCount` berubah!
+            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
                 dashboardVM.checkAlertStatus(items: vaultItems)
             }
             // Check the data the exact millisecond SwiftData finishes loading it
@@ -91,8 +93,6 @@ struct DashboardView: View {
                 TimeoutView(navPath: $navPath, item: selectedItem)
             }
         }
-        .environmentObject(validationVM)
-        .environmentObject(journalVM)
     }
 }
 
@@ -106,12 +106,12 @@ let mockDashboardContainer: ModelContainer = {
         
         // Item 1: Actively cooling down (target date in the future)
         let mock1 = VaultItem(name: "Apple Vision Pro", price: "60.000.000", targetDate: Date().addingTimeInterval(86400)) // 1 day from now
-        mock1.currency = "IDR"
+        mock1.currency = .idr
         mock1.status = .coolingDown
         
         // Item 2: Ready to validate (timer finished) 
         let mock2 = VaultItem(name: "New Balance 990v6", price: "4.500.000", targetDate: Date().addingTimeInterval(-3600)) // 1 hour ago
-        mock2.currency = "IDR"
+        mock2.currency = .idr
         mock2.status = .coolingDown 
         
         container.mainContext.insert(mock1)

@@ -15,14 +15,15 @@ struct TimeoutView: View {
     
     @Environment(\.modelContext) private var modelContext
     
-    @StateObject private var viewModel: TimeoutViewModel
+    @StateObject private var viewModel = TimeoutViewModel()
+    let item: VaultItem
 
     @State private var showJournalSheet = false
     @State private var showDeleteAlert = false
 
     init(navPath: Binding<NavigationPath>, item: VaultItem) {
         self._navPath = navPath
-        self._viewModel = StateObject(wrappedValue: TimeoutViewModel(item: item))
+        self.item = item
     }
     
     var body: some View {
@@ -78,7 +79,7 @@ struct TimeoutView: View {
                         .bold()
                     Spacer()
                 }
-                TextField("", text: .constant(viewModel.item.name))
+                TextField("", text: .constant(item.name))
                     .foregroundColor(.primary)
                     .disabled(true)
                     .padding(19)
@@ -103,7 +104,7 @@ struct TimeoutView: View {
                     HStack {
                         Image(systemName: "dollarsign")
                             .font(.system(size: 20))
-                        TextField("", text: .constant(viewModel.item.price))
+                        TextField("", text: .constant(item.price))
                             .disabled(true)
                             .foregroundColor(.primary)
                     }
@@ -113,7 +114,7 @@ struct TimeoutView: View {
                     .cornerRadius(42)
                     
                     HStack {
-                        Text(viewModel.item.currency)
+                        Text(item.currency.rawValue)
                             .font(.system(size: 20))
                             .foregroundColor(.primary)
                             .disabled(true)
@@ -137,7 +138,7 @@ struct TimeoutView: View {
                 HStack {
                     Image(systemName: "link")
                         .font(.system(size: 20))
-                    TextField("", text: .constant(viewModel.item.link.isEmpty ? "No link provided" : viewModel.item.link))
+                    TextField("", text: .constant(item.link.isEmpty ? "No link provided" : item.link))
                         .disabled(true)
                         .foregroundColor(.primary)
                 }
@@ -151,7 +152,7 @@ struct TimeoutView: View {
             HStack {
                 Spacer()
                 Button {
-                    journalVM.loadItem(viewModel.item)
+                    journalVM.loadItem(item)
                     showJournalSheet = true
                 } label: {
                     HStack(spacing: 4) {
@@ -194,7 +195,7 @@ struct TimeoutView: View {
             .padding(.horizontal, 30)
             
             Button {
-                validationVM.startValidation(for: viewModel.item)
+                validationVM.startValidation(for: item)
                 navPath.append("EmotionQuestion")
             } label: {
                 Text("Validate Answer")
@@ -213,9 +214,12 @@ struct TimeoutView: View {
         }
         .navigationTitle(viewModel.isTimerFinished ? "Validation" : "Cooling Down")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            viewModel.setup(with: item)
+        }
         .sheet(isPresented: $showJournalSheet) {
             NavigationStack {
-                ReviewJournalView(navPath: $navPath, isPresentedAsSheet: true, canEdit: !viewModel.isTimerFinished)
+                ReviewJournalView(navPath: .constant(NavigationPath()), isPresentedAsSheet: true, canEdit: !viewModel.isTimerFinished)
             }
             .environmentObject(journalVM)
         }
@@ -233,7 +237,7 @@ struct TimeoutView: View {
         .alert("Discard Item", isPresented: $showDeleteAlert) {
             Button("Delete", role: .destructive) {
                 // Delete it permanently from SwiftData
-                modelContext.delete(viewModel.item)
+                modelContext.delete(item)
                 // Pop back to the Dashboard
                 navPath.removeLast()
             }
@@ -245,23 +249,33 @@ struct TimeoutView: View {
 }
 
 #Preview("Cooling Down") {
-    let item = VaultItem(name: "New Balance 740", price: "1.740.000", targetDate: Date().addingTimeInterval(172000)) // ~2 days left
-    item.currency = "IDR"
-    
-    return NavigationStack {
-        TimeoutView(navPath: .constant(NavigationPath()), item: item)
-            .environmentObject(JournalViewModel())
-            .environmentObject(ValidationViewModel())
+    NavigationStack {
+        TimeoutView(
+            navPath: .constant(NavigationPath()),
+            item: VaultItem(
+                name: "New Balance 740",
+                price: "1.740.000",
+                currency: .idr,
+                targetDate: Date().addingTimeInterval(172000)
+            )
+        )
+        .environmentObject(JournalViewModel())
+        .environmentObject(ValidationViewModel())
     }
 }
 
 #Preview("Timeout") {
-    let item = VaultItem(name: "Apple Vision Pro", price: "60.000.000", targetDate: Date().addingTimeInterval(-3600)) // 1 hour ago
-    item.currency = "IDR"
-    
-    return NavigationStack {
-        TimeoutView(navPath: .constant(NavigationPath()), item: item)
-            .environmentObject(JournalViewModel())
-            .environmentObject(ValidationViewModel())
+    NavigationStack {
+        TimeoutView(
+            navPath: .constant(NavigationPath()),
+            item: VaultItem(
+                name: "Apple Vision Pro",
+                price: "60.000.000",
+                currency: .idr,
+                targetDate: Date().addingTimeInterval(-3600)
+            )
+        )
+        .environmentObject(JournalViewModel())
+        .environmentObject(ValidationViewModel())
     }
 }

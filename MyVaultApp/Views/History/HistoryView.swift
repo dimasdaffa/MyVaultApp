@@ -125,11 +125,11 @@ let mockContainer: ModelContainer = {
         let container = try ModelContainer(for: VaultItem.self, configurations: config)
         
         let mock1 = VaultItem(name: "Sony WH-1000XM5", price: "5.500.000", targetDate: Date().addingTimeInterval(-86400))
-        mock1.currency = "IDR"
+        mock1.currency = .idr
         mock1.status = .bought
         
         let mock2 = VaultItem(name: "Mechanical Keyboard", price: "2.100.000", targetDate: Date().addingTimeInterval(-172800))
-        mock2.currency = "IDR"
+        mock2.currency = .idr
         mock2.status = .saved
         
         container.mainContext.insert(mock1)

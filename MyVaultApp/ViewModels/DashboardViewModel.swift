@@ -11,29 +11,12 @@ import Combine
 class DashboardViewModel: ObservableObject {
     // 1. STATE YANG DIPUBLIKASIKAN KE VIEW
     @Published var hasReadyItem: Bool = false
-    @Published var currentTime: Date = Date()
+    @Published var zeroCount: Int = 0 // Untuk melacak jumlah item yang sudah 0, memicu re-render jika ada perubahan
     
-    private var timerCancellable: AnyCancellable?
-    
-    init() {
-        startTimer()
-    }
-    
-    // 2. ENGINE WAKTU: Berdetak setiap 1 detik untuk memperbarui UI
-    private func startTimer() {
-        timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                // Setiap detik, kita hanya perlu memperbarui currentTime.
-                // View akan bereaksi dan menghitung ulang sisanya secara otomatis
-                self?.currentTime = Date()
-            }
-    }
-    
-    // 3. LOGIKA PERHITUNGAN WAKTU
+    // 2. LOGIKA PERHITUNGAN WAKTU
     // Menghitung selisih detik antara targetDate dan waktu sekarang
     func timeRemaining(for item: VaultItem) -> TimeInterval {
-        let remaining = item.targetDate.timeIntervalSince(currentTime)
+        let remaining = item.targetDate.timeIntervalSince(Date())
         return max(0, remaining) // Mencegah angka menjadi negatif (mentok di 0)
     }
     
@@ -45,15 +28,24 @@ class DashboardViewModel: ObservableObject {
         return (h, m, s)
     }
     
-    // 4. LOGIKA ALERT "VALIDATE DECISION"
+    // 3. LOGIKA ALERT "VALIDATE DECISION"
     // Mengecek apakah ada minimal satu item yang sudah menyentuh 00:00:00
     func checkAlertStatus(items: [VaultItem]) {
-        // Cari item yang statusnya masih 'coolingDown' DAN waktunya sudah 0
         let isReady = items.contains { item in
             item.status == .coolingDown && timeRemaining(for: item) == 0
         }
         
-        // Hanya animasi jika ada perubahan status
+        let currentZeroCount = items.filter { item in
+            item.status == .coolingDown && timeRemaining(for: item) == 0
+        }.count
+        
+        // Hanya update state (yang akan memicu re-render) JIKA ada perubahan yang butuh animasi / sorting ulang
+        if zeroCount != currentZeroCount {
+            withAnimation(.easeInOut(duration: 0.5)) {
+                zeroCount = currentZeroCount
+            }
+        }
+        
         if hasReadyItem != isReady {
             withAnimation(.easeInOut(duration: 0.3)) {
                 hasReadyItem = isReady
@@ -61,7 +53,7 @@ class DashboardViewModel: ObservableObject {
         }
     }
     
-    // 5. GRAVITY SORTING LOGIC
+    // 4. GRAVITY SORTING LOGIC
     // Menerima array dari database, lalu menyusunnya untuk UI
     func processAndSortItems(_ items: [VaultItem]) -> [VaultItem?] {
         // A. Saring hanya yang aktif (Abaikan yang sudah di-Validate)

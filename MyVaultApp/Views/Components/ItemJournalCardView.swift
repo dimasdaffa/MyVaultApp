@@ -18,7 +18,7 @@ struct ItemJournalCardView: View {
             HStack(spacing: 12) {
                 Image(systemName: "banknote")
                     .font(.system(size: 22))
-                Text("\(item.currency) \(item.price)")
+                Text("\(item.currency.rawValue) \(item.price)")
                     .font(.system(size: 24))
             }
             
@@ -45,5 +45,5 @@ struct ItemJournalCardView: View {
 }
 
 #Preview {
-    ItemJournalCardView(item: VaultItem(name: "Sony WH-1000XM5", price: "5.000.000", currency: "IDR", link: "https://sony.com",targetDate: Date().addingTimeInterval(172800)))
+    ItemJournalCardView(item: VaultItem(name: "Sony WH-1000XM5", price: "5.000.000", currency: .idr, link: "https://sony.com",targetDate: Date().addingTimeInterval(172800)))
 }

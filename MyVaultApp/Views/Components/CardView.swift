@@ -50,27 +50,7 @@ struct CardView: View {
                                 .foregroundStyle(textColor)
                                 .lineLimit(1)
                             
-                            HStack(alignment: .lastTextBaseline, spacing: 0){
-                                Image(systemName: "timer").font(.system(size: 20)).opacity(0)
-                                Spacer()
-                                
-                                let time = viewModel.timeRemaining(for: validItem)
-                                
-                                if time == 0 {
-                                    Text("00:").font(.system(size: 47)).foregroundStyle(textColor).monospacedDigit()
-                                    Text("00").font(.system(size: 47)).foregroundStyle(Color.themeRed.opacity(0.85)).monospacedDigit()
-                                    Text(":00").font(.system(size: 47)).foregroundStyle(textColor).monospacedDigit()
-                                    Spacer()
-                                    Image(systemName: "clock.badge.exclamationmark").font(.system(size: 20)).foregroundStyle(Color.themeRed.opacity(0.85))
-                                } else {
-                                    let t = viewModel.formatTime(time)
-                                    Text(t.h).font(.system(size: 52)).foregroundStyle(textColor).monospacedDigit()
-                                    Text(":\(t.m):\(t.s)").font(.system(size: 27)).foregroundStyle(textColor).monospacedDigit()
-                                    Spacer()
-                                    Image(systemName: "timer").font(.system(size: 20)).foregroundStyle(textColor)
-                                }
-                            }
-                            .padding(.horizontal, 15)
+                            LiveTimerView(targetDate: validItem.targetDate, textColor: textColor)
                             
                         } else {
                             // --- EMPTY SLOT UI ---
@@ -121,11 +101,11 @@ struct CardView: View {
     
     // Item 1: Actively cooling down (24h left)
     let mock1 = VaultItem(name: "Apple Vision Pro", price: "60.000.000", targetDate: Date().addingTimeInterval(86400))
-    mock1.currency = "IDR"
+    mock1.currency = .idr
     
     // Item 2: Timer finished (1 hour ago)
     let mock2 = VaultItem(name: "New Balance 990v6", price: "4.500.000", targetDate: Date().addingTimeInterval(-3600))
-    mock2.currency = "IDR"
+    mock2.currency = .idr
     
     return CardView(
         navPath: .constant(NavigationPath()),

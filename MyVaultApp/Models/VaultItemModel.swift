@@ -13,7 +13,7 @@ class VaultItem {
     var id: UUID
     var name: String
     var price: String
-    var currency: String
+    var currency: Currency
     var link: String
     var dateAdded: Date
     var targetDate: Date
@@ -22,7 +22,7 @@ class VaultItem {
     var financeAnswer: String
     
     // The initializer creates a brand new entry
-    init(name: String, price: String = "", currency: String = "IDR", link: String = "", targetDate: Date) {
+    init(name: String, price: String = "", currency: Currency = .idr, link: String = "", targetDate: Date) {
         self.id = UUID()
         self.name = name
         self.price = price

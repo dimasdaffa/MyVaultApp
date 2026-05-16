@@ -44,7 +44,7 @@ final class CreateItemViewModel: ObservableObject {
 		let newItem = VaultItem(
 			name: itemTitle,
 			price: itemPrice,
-			currency: selectedCurrency.rawValue,
+			currency: selectedCurrency,
 			link: itemLink,
 			targetDate: placeholder
 		)
