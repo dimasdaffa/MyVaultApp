@@ -73,6 +73,7 @@ struct QuestionJournalView: View {
         }
         .padding(.bottom, -10)
         .navigationTitle("Journal")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .scrollDismissesKeyboard(.interactively)
         .onTapGesture {
