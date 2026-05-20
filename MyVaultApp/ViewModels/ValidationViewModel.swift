@@ -10,19 +10,23 @@ import Combine
 class ValidationViewModel: ObservableObject {
     @Published var activeItem: VaultItem?
     
+    // Categorized by risk for index-based multiplier logic
     @Published var emotionQuestions: [EmotionQuestion] = [
-        EmotionQuestion(text: "I feel this price is a \"special deal\" that won't last."),
-        EmotionQuestion(text: "The current discount/offer is the primary reason I want it now."),
-        EmotionQuestion(text: "The product's appearance is so striking it overrides my budget."),
-        EmotionQuestion(text: "I feel I must act now because the stock is \"limited.\""),
-        EmotionQuestion(text: "Seeing others enjoy this product makes me want to own it immediately."),
-        EmotionQuestion(text: "I believe buying this will provide an instant \"mood boost\"."),
-        EmotionQuestion(text: "I am more afraid of losing this deal than spending the money."),
-        EmotionQuestion(text: "I want this specifically because it is a new or unique trend."),
-        EmotionQuestion(text: "The ease of checkout (e.g., QRIS/1-Tap) makes me want to proceed."),
-        EmotionQuestion(text: "A live demo or influencer review has convinced me I need this."),
-        EmotionQuestion(text: "I have a physical urge to possess this item right this second."),
-        EmotionQuestion(text: "I feel justified buying this because it's a special occasion/payday.")
+        // --- Standard Zone (1x Multiplier) ---
+        EmotionQuestion(text: "Seeing influencers or friends enjoy this makes me want to own it immediately."), // Social Proof
+        EmotionQuestion(text: "The product’s appearance is so striking it overrides my original plans."), // Aesthetics
+        EmotionQuestion(text: "I want this specifically because it represents a new or unique trend."), // Novelty
+        EmotionQuestion(text: "The item fits an 'ideal version' of myself I want others to see."), // Identity
+        
+        // --- High Risk Zone (2x Multiplier) ---
+        EmotionQuestion(text: "I feel I must act immediately because the stock is 'limited' or 'selling fast'."), // Scarcity
+        EmotionQuestion(text: "I feel I 'deserve' this because of a special occasion, payday, or hard work."), // Justification
+        EmotionQuestion(text: "The ease of checkout (QRIS/1-Tap) is the main reason I'm moving so fast."), // Frictionless
+        
+        // --- Critical Zone (3x Multiplier) ---
+        EmotionQuestion(text: "I feel a physical restlessness or tension until I possess this item."), // Physical Urge
+        EmotionQuestion(text: "I am primarily buying this to escape a bad mood, stress, or to get an instant 'high'."), // Mood Repair
+        EmotionQuestion(text: "I am more afraid of 'losing the deal' than I am of losing the actual money.") // Loss Aversion
     ]
     
     @Published var financeQuestions: [FinanceQuestion] = [
@@ -33,35 +37,47 @@ class ValidationViewModel: ObservableObject {
     @Published var currentEmotionIndex: Int = 0
     @Published var currentFinanceIndex: Int = 0
     
+    // MARK: - Logic Layer
     var currentTotalProgress: Int {
-        currentEmotionIndex < 12 ? (currentEmotionIndex + 1) : (12 + currentFinanceIndex + 1)
+        currentEmotionIndex < 10 ? (currentEmotionIndex + 1) : (10 + currentFinanceIndex + 1)
     }
     
-    // LOGIC
-    // Hitung total poin dari 12 EMOTION QUESTION
-    var totalEmotionScore: Int {
-        emotionQuestions.compactMap { $0.score }.reduce(0, +)
+    // Weighted Calculation Logic
+    var totalWeightedEmotionScore: Int {
+        var total = 0
+        for (index, question) in emotionQuestions.enumerated() {
+            let rawScore = question.score ?? 0
+            
+            switch index {
+            case 7...9: // Critical Zone (3x)
+                total += (rawScore * 3)
+            case 4...6: // High Risk Zone (2x)
+                total += (rawScore * 2)
+            default:    // Standard Zone (1x)
+                total += rawScore
+            }
+        }
+        return total
     }
     
-    // Hitung persentase impulsif
-    var emotionPercentage: Double {
-        (Double(totalEmotionScore) / 60.0) * 100.0
-    }
-    
-    // GATE 1: Apakah lolos EMOTION QUESTION? (Harus < 70%, alias poin <= 41)
+    //GATE 1: Emotion Threshold (Strict 50% - Safe if score <= 50)
     var isEmotionSafe: Bool {
-        emotionPercentage < 70.0
+        // Max possible weighted score is 100
+        totalWeightedEmotionScore <= 50
     }
     
-    // GATE 2: Apakah lolos FINANCIAL QUESTION? (Q2 harus "No")
+    // GATE 2: Objective Financial Gate
     var isFinanceSafe: Bool {
+        // Question index 1 is the savings goal question
         financeQuestions[1].answer == "No"
     }
     
-    // RESULT
+    // FINAL VERDICT: XOR Dual-Key Framework
     var finalDecisionIsBuy: Bool {
         return isEmotionSafe && isFinanceSafe
     }
+    
+    // MARK: - Functions
     
     func nextEmotionQuestion() {
         if currentEmotionIndex < emotionQuestions.count - 1 {
@@ -80,7 +96,6 @@ class ValidationViewModel: ObservableObject {
         self.currentEmotionIndex = 0
         self.currentFinanceIndex = 0
         
-        // Reset all previous scores so it's a fresh quiz
         for i in 0..<emotionQuestions.count {
             emotionQuestions[i].score = nil
         }
@@ -90,20 +105,16 @@ class ValidationViewModel: ObservableObject {
     }
     
     func finalizeValidation() -> Bool {
-        // Ensure we actually have an item loaded
         guard let item = activeItem else { return false }
         
-        // Calculate the final decision based on your existing logic
         let isBuy = finalDecisionIsBuy
         
-        // Update the item's status in SwiftData
         if isBuy {
             item.status = .bought
         } else {
             item.status = .saved
         }
         
-        // Return the decision to the View for routing
         return isBuy
     }
 }

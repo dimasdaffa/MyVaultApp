@@ -15,16 +15,16 @@ struct FinanceQuestionView: View {
         
         VStack{
             ProgressBarView(
-                currentStep: 12 + (validationVM.currentFinanceIndex + 1),
-                totalSteps: 14
+                currentStep: 10 + (validationVM.currentFinanceIndex + 1),
+                totalSteps: 12
             )
             VStack(spacing: 20){
                 HStack(alignment: .lastTextBaseline,spacing: 0){
-                    Text("\(12 + validationVM.currentFinanceIndex + 1)/")
+                    Text("\(10 + validationVM.currentFinanceIndex + 1)/")
                         .font(.system(size: 70))
                         .bold()
                         .foregroundStyle(validationVM.currentFinanceIndex == 1 ? Color.themePrimary : Color.black)
-                    Text("14")
+                    Text("12")
                         .font(.system(size: 44))
                         .bold()
                     Spacer()

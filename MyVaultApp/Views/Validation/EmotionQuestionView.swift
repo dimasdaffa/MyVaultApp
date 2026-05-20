@@ -17,7 +17,7 @@ struct EmotionQuestionView: View {
         VStack{
             ProgressBarView(
                 currentStep: validationVM.currentEmotionIndex + 1,
-                totalSteps: 14
+                totalSteps: 12
             )
             
             VStack(spacing: 20){
@@ -25,7 +25,7 @@ struct EmotionQuestionView: View {
                     Text("\(validationVM.currentTotalProgress)/")
                         .font(.system(size: 70))
                         .bold()
-                    Text("14")
+                    Text("12")
                         .font(.system(size: 44))
                         .bold()
                         .foregroundStyle(Color.themePrimary)
@@ -78,8 +78,8 @@ struct EmotionQuestionView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     HapticManager.shared.impact(style: .medium)
-                    // Jika pertanyaan ke-12 (index 11), pindah ke halaman Finansial
-                    if validationVM.currentEmotionIndex == 11 {
+                    // Jika pertanyaan terakhir, pindah ke halaman Finansial
+                    if validationVM.currentEmotionIndex == validationVM.emotionQuestions.count - 1 {
                         navPath.append("FinanceQuestion")
                     } else {
                         // Jika belum, lanjut pertanyaan emosi berikutnya
