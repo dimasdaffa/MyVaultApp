@@ -20,9 +20,10 @@ class VaultItem {
     var status: ItemStatus
     var emotionAnswer: String
     var financeAnswer: String
+    var cooldownDuration: TimeInterval
     
     // The initializer creates a brand new entry
-    init(name: String, price: String = "", currency: Currency = .idr, link: String = "", targetDate: Date) {
+    init(name: String, price: String = "", currency: Currency = .idr, link: String = "", targetDate: Date, cooldownDuration: TimeInterval = 86400) {
         self.id = UUID()
         self.name = name
         self.price = price
@@ -33,6 +34,7 @@ class VaultItem {
         self.status = ItemStatus.coolingDown
         self.emotionAnswer = ""
         self.financeAnswer = ""
+        self.cooldownDuration = cooldownDuration
     }
 }
 

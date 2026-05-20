@@ -16,7 +16,7 @@ struct DashboardView: View {
     @EnvironmentObject private var validationVM: ValidationViewModel
     @EnvironmentObject private var journalVM: JournalViewModel
     
-    @Query private var vaultItems: [VaultItem]
+    @Query(sort: \VaultItem.targetDate, order: .reverse) private var vaultItems: [VaultItem]
     
     var body: some View { 
         NavigationStack (path: $navPath) { 
