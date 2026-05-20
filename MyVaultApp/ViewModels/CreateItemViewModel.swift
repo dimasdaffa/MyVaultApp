@@ -69,4 +69,6 @@ final class CreateItemViewModel: ObservableObject {
 
 		return formatter.string(from: NSNumber(value: number)) ?? ""
 	}
+    
+    
 }

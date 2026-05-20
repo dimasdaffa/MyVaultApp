@@ -99,10 +99,12 @@ struct FinanceQuestionView: View {
                         // Change text to "Finish" if it's the last question
                         Text(validationVM.currentFinanceIndex == validationVM.financeQuestions.count - 1 ? "Finish" : "Next")
                             .fontWeight(.semibold)
+                            .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
                         
                         // Only show the chevron arrow if it's NOT the last question
                         if validationVM.currentFinanceIndex < validationVM.financeQuestions.count - 1 {
                             Image(systemName: "chevron.right")
+                                .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
                         }
                     }
                     .font(.system(size: 16))

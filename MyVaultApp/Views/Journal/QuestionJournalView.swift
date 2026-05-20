@@ -93,6 +93,7 @@ struct QuestionJournalView: View {
                 } label: {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 16, weight: .semibold))
+                        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -113,6 +114,7 @@ struct QuestionJournalView: View {
                         Text(viewModel.isLastQuestion ? "Finish" : "Next")
                             .fontWeight(.semibold)
                         Image(systemName: "chevron.right")
+                            .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
                     }
                     .font(.system(size: 16))
                     .padding(.horizontal, 16)

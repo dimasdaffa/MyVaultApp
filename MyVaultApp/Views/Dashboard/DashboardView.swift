@@ -64,6 +64,7 @@ struct DashboardView: View {
                         Image(systemName: "plus")
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(activeCount >= 3 ? .gray : Color.themePrimary)
+                            .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
                     }
                     .disabled(activeCount >= 3)
                 }

@@ -16,14 +16,11 @@ struct EditingItem: Identifiable {
 
 class JournalViewModel: ObservableObject{
     @Published var questions: [JournalQuestion] = [
-        JournalQuestion(text: "Is this item going to add value to my life?"),
-        JournalQuestion(text: "Is it something I will use regularly?"),
-        JournalQuestion(text: "Will it bring me joy?"),
-        JournalQuestion(text: "Do I have a specific use and a place to store it?"),
-        JournalQuestion(text: "Is having this more important than my goal?"),
-        JournalQuestion(text: "Am I willing to maintain this item?"),
-        JournalQuestion(text: "If it was full price, would I still buy it?"),
-        JournalQuestion(text: "Is this thing worth my time?")
+        JournalQuestion(text: "How exactly will this item change my daily routine for the better?"),
+        JournalQuestion(text: "Do I already own something that serves a similar purpose?"),
+        JournalQuestion(text: "Would I still want this if I couldn't tell anyone I bought it?"),
+        JournalQuestion(text: "What specific long-term goal am I delaying by spending this money now?"),
+        JournalQuestion(text: "Would I prefer to have this item, or the cash equivalent in my hand right now?")
     ]
     
     @Published var currentIndex: Int = 0
