@@ -11,6 +11,7 @@ import Combine
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.vaultItemRepositoryFactory) private var repositoryFactory
     @EnvironmentObject var journalVM: JournalViewModel
     
     @StateObject private var viewModel = HistoryViewModel()
@@ -19,6 +20,10 @@ struct HistoryView: View {
     
     @State private var selectedItem: VaultItem?
     @State private var showDetailSheet = false
+
+    private var repository: any VaultItemRepository {
+        repositoryFactory(modelContext)
+    }
     
     var body: some View {
         NavigationStack {
@@ -51,7 +56,7 @@ struct HistoryView: View {
                                 .listRowInsets(EdgeInsets(top: 10, leading: 25, bottom: 10, trailing: 25))
                         }
                         .onDelete { offsets in
-                            viewModel.deleteItems(at: offsets, from: historyItems, context: modelContext)
+                            viewModel.deleteItems(at: offsets, from: historyItems, repository: repository)
                         }
                     }
                     .listStyle(.plain)

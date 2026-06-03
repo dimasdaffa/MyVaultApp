@@ -35,18 +35,4 @@ struct FinanceAnswerOption: Identifiable, Hashable {
     var id: String { value }
 }
 
-enum QuestionsData {
-    static let emotionOptions: [EmotionScaleOption] = [
-        EmotionScaleOption(label: "Very Strongly", score: 5),
-        EmotionScaleOption(label: "Strongly", score: 4),
-        EmotionScaleOption(label: "Moderately", score: 3),
-        EmotionScaleOption(label: "Little", score: 2),
-        EmotionScaleOption(label: "Least", score: 1)
-    ]
-
-    static let financeOptions: [FinanceAnswerOption] = [
-        FinanceAnswerOption(value: "Yes"),
-        FinanceAnswerOption(value: "No")
-    ]
-}
 

@@ -17,10 +17,10 @@ class HistoryViewModel: ObservableObject {
     }
     
     // Handle the database deletion
-    func deleteItems(at offsets: IndexSet, from historyItems: [VaultItem], context: ModelContext) {
+    func deleteItems(at offsets: IndexSet, from historyItems: [VaultItem], repository: any VaultItemRepository) {
         for index in offsets {
             let itemToDelete = historyItems[index]
-            context.delete(itemToDelete)
+            repository.delete(itemToDelete)
         }
     }
 }

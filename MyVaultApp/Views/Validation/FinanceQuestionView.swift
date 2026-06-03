@@ -10,21 +10,22 @@ import SwiftUI
 struct FinanceQuestionView: View {
     @Binding var navPath: NavigationPath
     @EnvironmentObject var validationVM: ValidationViewModel
+    @Environment(\.hapticProvider) private var hapticProvider
     
     var body: some View {
         
         VStack{
             ProgressBarView(
-                currentStep: 10 + (validationVM.currentFinanceIndex + 1),
-                totalSteps: 12
+                currentStep: validationVM.currentFinanceProgress,
+                totalSteps: validationVM.totalSteps
             )
             VStack(spacing: 20){
                 HStack(alignment: .lastTextBaseline,spacing: 0){
-                    Text("\(10 + validationVM.currentFinanceIndex + 1)/")
+                    Text("\(validationVM.currentFinanceProgress)/")
                         .font(.system(size: 70))
                         .bold()
-                        .foregroundStyle(validationVM.currentFinanceIndex == 1 ? Color.themePrimary : Color.black)
-                    Text("12")
+                        .foregroundStyle(validationVM.currentFinanceIndex == validationVM.financeQuestions.count - 1 ? Color.themePrimary : Color.black)
+                    Text("\(validationVM.totalSteps)")
                         .font(.system(size: 44))
                         .bold()
                     Spacer()
@@ -45,7 +46,7 @@ struct FinanceQuestionView: View {
                 VStack(spacing: 15){
                     ForEach(QuestionsData.financeOptions) { option in
                         Button(action: {
-                            HapticManager.shared.impact(style: .light)
+                            hapticProvider.impact(style: .light)
                             validationVM.financeQuestions[validationVM.currentFinanceIndex].answer = option.value
                         }) {
                             Text(option.value)
@@ -76,7 +77,7 @@ struct FinanceQuestionView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    HapticManager.shared.impact(style: .medium)
+                    hapticProvider.impact(style: .medium)
                     // Check if we are on the very last Finance question
                     if validationVM.currentFinanceIndex == validationVM.financeQuestions.count - 1 {
                         

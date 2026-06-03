@@ -293,3 +293,67 @@ Dengan menggunakan `.constant(NavigationPath())`, kita melindungi `navPath` utam
 
 ---
 *Selalu ingat aturan emas ini: Jangan pernah melemparkan (passing) Binding milik `NavigationPath` induk ke dalam tumpukan `NavigationStack` baru yang dirender secara modal!* 🚀
+
+# Panduan Pemula iOS: Dependency Injection (DI) Sederhana di SwiftUI
+
+Dokumen ini menjelaskan kenapa kita menambahkan DI sederhana melalui `Environment` untuk haptics dan penyimpanan data di MyVaultApp.
+
+---
+
+## 1. Masalah: Singleton dan Context Langsung Sulit Dites
+
+Sebelumnya, view memanggil `HapticManager.shared` secara langsung dan menyentuh `ModelContext` di dalam view. Ini membuat:
+- **Unit test sulit** karena ketergantungan hard-coded.
+- **Preview sulit diatur** karena tidak bisa mengganti implementasi dengan versi mock.
+
+---
+
+## 2. Solusi: Inject Dependency via Environment
+
+Kita membuat protokol sederhana untuk haptics dan repository untuk SwiftData, lalu memasukkannya ke `Environment`.
+Dengan cara ini, production default tetap sama, tetapi kita bisa mengganti implementasi saat testing.
+
+```swift
+protocol HapticProviding {
+    func impact(style: UIImpactFeedbackGenerator.FeedbackStyle)
+    func notification(type: UINotificationFeedbackGenerator.FeedbackType)
+}
+
+protocol VaultItemRepository {
+    func insert(_ item: VaultItem)
+    func delete(_ item: VaultItem)
+    func save() throws
+}
+```
+
+View cukup mengambilnya dari `Environment`:
+
+```swift
+@Environment(\.hapticProvider) private var hapticProvider
+@Environment(\.vaultItemRepositoryFactory) private var repositoryFactory
+```
+
+---
+
+## 3. Contoh Pemakaian di View
+
+```swift
+// Haptics
+hapticProvider.notification(type: .success)
+
+// SwiftData melalui repository
+let repository = repositoryFactory(modelContext)
+repository.insert(item)
+try repository.save()
+```
+
+---
+
+## 4. Keuntungan Praktis
+
+- **Testability:** mudah membuat mock provider untuk unit test.
+- **Preview-friendly:** bisa menggunakan dummy provider di preview.
+- **Scalability:** jika nanti berpindah storage, hanya repository yang diganti.
+
+---
+*DI tidak harus rumit. Untuk SwiftUI, `Environment` sudah cukup kuat untuk kebutuhan aplikasi skala kecil sampai menengah.*
