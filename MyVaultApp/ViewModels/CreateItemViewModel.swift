@@ -14,6 +14,8 @@ final class CreateItemViewModel: ObservableObject {
     @Published var itemTitle: String = ""
     @Published var itemPrice: String = ""
     @Published var itemLink: String = ""
+
+    private let cooldownPolicy = CooldownPolicy.default
     
     var isFormValid: Bool {
         let isTitleValid = !itemTitle.trimmingCharacters(in: .whitespaces).isEmpty
@@ -39,7 +41,7 @@ final class CreateItemViewModel: ObservableObject {
         journalVM.resetJournal()
         
         // Calculate the duration based on price and currency
-        let duration = calculateCooldown(for: itemPrice, currency: selectedCurrency)
+        let duration = cooldownPolicy.cooldownDuration(for: itemPrice, currency: selectedCurrency)
         
         let newItem = VaultItem(
             name: itemTitle,
@@ -52,26 +54,6 @@ final class CreateItemViewModel: ObservableObject {
         
         journalVM.activeItem = newItem
         return newItem
-    }
-    
-    private func calculateCooldown(for priceString: String, currency: Currency) -> TimeInterval {
-        let cleanPrice = Double(priceString.filter { "0123456789".contains($0) }) ?? 0
-        
-        switch currency {
-        case .idr:
-            if cleanPrice < 5000 { return 60 }            // Testing
-            if cleanPrice < 500000 { return 86400 }       // 24h
-            if cleanPrice <= 5000000 { return 172800 }    // 48h
-            return 259200                                 // 72h
-        case .usd:
-            if cleanPrice < 35 { return 86400 }
-            if cleanPrice <= 350 { return 172800 }
-            return 259200
-        case .rm:
-            if cleanPrice < 150 { return 86400 }
-            if cleanPrice <= 1500 { return 172800 }
-            return 259200
-        }
     }
     
     private func formatCurrency(_ value: String, currency: Currency) -> String {

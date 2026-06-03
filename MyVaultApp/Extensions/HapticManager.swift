@@ -6,7 +6,7 @@
 //
 import UIKit
 
-final class HapticManager {
+final class HapticManager: HapticProviding {
     static let shared = HapticManager()
     private init() {}
 

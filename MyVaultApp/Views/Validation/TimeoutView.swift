@@ -14,12 +14,17 @@ struct TimeoutView: View {
     @EnvironmentObject var validationVM: ValidationViewModel
     
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.vaultItemRepositoryFactory) private var repositoryFactory
     
     @StateObject private var viewModel = TimeoutViewModel()
     let item: VaultItem
 
     @State private var showJournalSheet = false
     @State private var showDeleteAlert = false
+
+    private var repository: any VaultItemRepository {
+        repositoryFactory(modelContext)
+    }
 
     init(navPath: Binding<NavigationPath>, item: VaultItem) {
         self._navPath = navPath
@@ -237,7 +242,7 @@ struct TimeoutView: View {
         .alert("Discard Item", isPresented: $showDeleteAlert) {
             Button("Delete", role: .destructive) {
                 // Delete it permanently from SwiftData
-                modelContext.delete(item)
+                repository.delete(item)
                 // Pop back to the Dashboard
                 navPath.removeLast()
             }

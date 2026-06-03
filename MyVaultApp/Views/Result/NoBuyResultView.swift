@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NoBuyResultView: View {
     @Binding var navPath: NavigationPath
+    @Environment(\.hapticProvider) private var hapticProvider
     
     var body: some View {
         VStack{
@@ -88,7 +89,7 @@ struct NoBuyResultView: View {
             .background(Color.themeBackground)
         }
         .onAppear {
-            HapticManager.shared.impact(style: .heavy)
+            hapticProvider.impact(style: .heavy)
         }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
