@@ -111,19 +111,15 @@ struct ReviewJournalView: View {
                         journalVM.lockInJournalAnswers()
                         
                         if let finalItemToSave = journalVM.activeItem {
-                            // Only insert into SwiftData if it's a BRAND NEW item.
-                            // If it's an existing item being edited, SwiftData auto-saves it automatically
-                            if finalItemToSave.modelContext == nil {
-                                // START THE TIMER NOW — cooldown begins from confirm, not from "START"
-                                repository.insert(finalItemToSave)
-                                finalItemToSave.targetDate = Date().addingTimeInterval(finalItemToSave.cooldownDuration)
-                                do {
-                                    try repository.save()
-                                } catch {
-                                    saveErrorMessage = error.localizedDescription
-                                    showSaveError = true
-                                    return
-                                }
+                            // START THE TIMER NOW — cooldown begins from confirm, not from "START"
+                            finalItemToSave.targetDate = Date().addingTimeInterval(finalItemToSave.cooldownDuration)
+                            repository.insert(finalItemToSave)
+                            do {
+                                try repository.save()
+                            } catch {
+                                saveErrorMessage = error.localizedDescription
+                                showSaveError = true
+                                return
                             }
                         }
                         // WIPE THE JOURNAL CLEAN FOR THE NEXT TIME
