@@ -143,9 +143,21 @@ struct TimeoutView: View {
                     HStack {
                         Image(systemName: "link")
                             .font(.system(size: 20))
-                        TextField("", text: .constant(item.link.isEmpty ? "No link provided" : item.link))
-                            .disabled(true)
-                            .foregroundColor(.primary)
+                            .foregroundColor(item.link.isEmpty ? .gray : Color.themePrimary)
+                        
+                        if let url = item.url {
+                            Link(item.link, destination: url)
+                                .font(.body)
+                                .foregroundColor(Color.themePrimary)
+                                .underline()
+                                .lineLimit(1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            Text(item.link.isEmpty ? "No link provided" : item.link)
+                                .foregroundColor(.gray)
+                                .lineLimit(1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
                     .padding(19)
                     .background(Color.themeCard)

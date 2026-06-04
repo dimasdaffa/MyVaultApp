@@ -26,11 +26,20 @@ struct ItemJournalCardView: View {
                 HStack(spacing: 12) {
                     Image(systemName: "link")
                         .font(.system(size: 22))
-                    Text(item.link)
-                        .font(.system(size: 24))
-                        .foregroundColor(Color.themePrimary)
-                        .underline()
-                        .lineLimit(1)
+                    
+                    if let url = item.url {
+                        Link(item.link, destination: url)
+                            .font(.system(size: 24))
+                            .foregroundColor(Color.themePrimary)
+                            .underline()
+                            .lineLimit(1)
+                    } else {
+                        Text(item.link)
+                            .font(.system(size: 24))
+                            .foregroundColor(Color.themePrimary)
+                            .underline()
+                            .lineLimit(1)
+                    }
                 }
             }
         }

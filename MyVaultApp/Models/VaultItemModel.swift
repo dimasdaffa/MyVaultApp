@@ -36,6 +36,16 @@ class VaultItem {
         self.financeAnswer = ""
         self.cooldownDuration = cooldownDuration
     }
+    
+    var url: URL? {
+        guard !link.isEmpty else { return nil }
+        let cleanLink = link.trimmingCharacters(in: .whitespacesAndNewlines)
+        if cleanLink.lowercased().hasPrefix("http://") || cleanLink.lowercased().hasPrefix("https://") {
+            return URL(string: cleanLink)
+        } else {
+            return URL(string: "https://" + cleanLink)
+        }
+    }
 }
 
 // A simple list of states our item can be in
