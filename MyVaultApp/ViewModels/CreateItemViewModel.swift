@@ -17,7 +17,8 @@ final class CreateItemViewModel: ObservableObject {
     
     var isFormValid: Bool {
         let isTitleValid = !itemTitle.trimmingCharacters(in: .whitespaces).isEmpty
-        let isPriceValid = !itemPrice.trimmingCharacters(in: .whitespaces).isEmpty && itemPrice != "0"
+        let parsedPrice = parsePriceDouble(itemPrice, currency: selectedCurrency)
+        let isPriceValid = parsedPrice > 0
         return isTitleValid && isPriceValid
     }
     
@@ -55,7 +56,7 @@ final class CreateItemViewModel: ObservableObject {
     }
     
     private func calculateCooldown(for priceString: String, currency: Currency) -> TimeInterval {
-        let cleanPrice = Double(priceString.filter { "0123456789".contains($0) }) ?? 0
+        let cleanPrice = parsePriceDouble(priceString, currency: currency)
         
         switch currency {
         case .idr:
@@ -74,21 +75,80 @@ final class CreateItemViewModel: ObservableObject {
         }
     }
     
-    private func formatCurrency(_ value: String, currency: Currency) -> String {
-        let numbersOnly = value.filter { "0123456789".contains($0) }
-        guard let number = Int(numbersOnly) else { return "" }
+    private func parseParts(_ input: String) -> (integer: String, decimal: String?) {
+        if input.isEmpty { return ("", nil) }
         
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        
-        switch currency {
-        case .idr:
-            formatter.groupingSeparator = "."
-        case .usd, .rm:
-            formatter.groupingSeparator = ","
+        // Find the last occurrence of "." or "," which could act as a decimal point.
+        if let lastSeparatorIndex = input.lastIndex(where: { $0 == "." || $0 == "," }) {
+            let afterSeparator = input[input.index(after: lastSeparatorIndex)...]
+            
+            // Check if this separator is a grouping separator or a decimal separator.
+            // In USD/RM, a grouping separator is "," and is typically followed by exactly 3 digits.
+            // Any "." is a decimal separator. Any "," followed by 0, 1, or 2 digits is a decimal separator.
+            let isDecimal: Bool
+            if input[lastSeparatorIndex] == "." {
+                isDecimal = true
+            } else {
+                isDecimal = afterSeparator.isEmpty || afterSeparator.count < 3
+            }
+            
+            if isDecimal {
+                let beforeSeparator = input[..<lastSeparatorIndex]
+                let cleanInteger = beforeSeparator.filter { "0123456789".contains($0) }
+                let cleanDecimal = afterSeparator.filter { "0123456789".contains($0) }
+                return (cleanInteger, String(cleanDecimal.prefix(2)))
+            }
         }
         
-        return formatter.string(from: NSNumber(value: number)) ?? ""
+        // No decimal separator found
+        let cleanInteger = input.filter { "0123456789".contains($0) }
+        return (cleanInteger, nil)
+    }
+    
+    private func parsePriceDouble(_ priceString: String, currency: Currency) -> Double {
+        if currency == .idr {
+            let cleanString = priceString.replacingOccurrences(of: ".", with: "")
+            return Double(cleanString) ?? 0
+        } else {
+            // Remove grouping commas
+            let cleanString = priceString.replacingOccurrences(of: ",", with: "")
+            return Double(cleanString) ?? 0
+        }
+    }
+    
+    private func formatCurrency(_ value: String, currency: Currency) -> String {
+        if currency == .idr {
+            let numbersOnly = value.filter { "0123456789".contains($0) }
+            guard let number = Int(numbersOnly) else { return "" }
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            formatter.groupingSeparator = "."
+            return formatter.string(from: NSNumber(value: number)) ?? ""
+        } else {
+            // USD or RM
+            let (integerPart, decimalPart) = parseParts(value)
+            
+            // Format the integer part
+            let formattedInteger: String
+            if let number = Int(integerPart) {
+                let formatter = NumberFormatter()
+                formatter.numberStyle = .decimal
+                formatter.groupingSeparator = ","
+                formattedInteger = formatter.string(from: NSNumber(value: number)) ?? ""
+            } else {
+                formattedInteger = integerPart.isEmpty ? "" : "0"
+            }
+            
+            if let decimal = decimalPart {
+                // If decimal is not nil, it means there is a decimal separator.
+                // Reconstruct as formattedInteger + "." + decimal.
+                // If integerPart is empty (e.g. user typed "."), formattedInteger defaults to "0".
+                let displayInteger = integerPart.isEmpty ? "0" : formattedInteger
+                return displayInteger + "." + decimal
+            } else {
+                return formattedInteger
+            }
+        }
     }
     
     

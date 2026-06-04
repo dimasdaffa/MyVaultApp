@@ -76,7 +76,7 @@ struct CreateItemView: View {
                                 Image(systemName: "dollarsign")
                                     .font(.system(size: 20))
                                 TextField("0", text: $viewModel.itemPrice)
-                                    .keyboardType(.numberPad)
+                                    .keyboardType(.decimalPad)
                                     .onChange(of: viewModel.itemPrice) { oldValue, newValue in
                                         viewModel.onPriceChanged(newValue)
                                     }
