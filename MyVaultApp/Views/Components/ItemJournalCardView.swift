@@ -18,7 +18,7 @@ struct ItemJournalCardView: View {
             HStack(spacing: 12) {
                 Image(systemName: "banknote")
                     .font(.system(size: 22))
-                Text("\(item.currency.rawValue) \(item.price)")
+                Text("\(item.currency.symbol) \(item.price)")
                     .font(.system(size: 24))
             }
             

@@ -97,7 +97,7 @@ struct HistoryView: View {
             }
             
             HStack {
-                Text("\(item.currency) \(item.price)")
+                Text("\(item.currency.symbol) \(item.price)")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.gray)
                 

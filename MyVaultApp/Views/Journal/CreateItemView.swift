@@ -73,8 +73,10 @@ struct CreateItemView: View {
                         }
                         HStack{
                             HStack{
-                                Image(systemName: "dollarsign")
+                                Text(viewModel.selectedCurrency.symbol)
                                     .font(.system(size: 20))
+                                    .bold()
+                                    .foregroundColor(.secondary)
                                 TextField("0", text: $viewModel.itemPrice)
                                     .keyboardType(.decimalPad)
                                     .onChange(of: viewModel.itemPrice) { oldValue, newValue in

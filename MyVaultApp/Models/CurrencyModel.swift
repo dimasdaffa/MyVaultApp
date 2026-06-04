@@ -13,4 +13,12 @@ enum Currency: String, CaseIterable, Identifiable, Codable {
 	case usd = "USD"
 
 	var id: String { rawValue }
+
+	var symbol: String {
+		switch self {
+		case .rm: return "RM"
+		case .idr: return "Rp"
+		case .usd: return "$"
+		}
+	}
 }

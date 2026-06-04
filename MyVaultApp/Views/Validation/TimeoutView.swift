@@ -102,8 +102,10 @@ struct TimeoutView: View {
                 }
                 HStack {
                     HStack {
-                        Image(systemName: "dollarsign")
+                        Text(item.currency.symbol)
                             .font(.system(size: 20))
+                            .bold()
+                            .foregroundColor(.secondary)
                         TextField("", text: .constant(item.price))
                             .disabled(true)
                             .foregroundColor(.primary)
