@@ -50,19 +50,20 @@ struct ReviewJournalView: View {
                             }
                         } label: {
                             VStack(alignment: .leading, spacing: 12) {
-                                Text(question.text)
-                                    .font(.system(size: 16))
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.gray)
-                                    .overlay(
-                                        HStack {
-                                            Spacer()
-                                            if !isPresentedAsSheet {
-                                                Image(systemName: "pencil")
-                                                    .foregroundColor(.gray.opacity(0.5))
-                                            }
-                                        }
-                                    )
+                                HStack(alignment: .top) {
+                                    Text(question.text)
+                                        .font(.system(size: 16))
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.gray)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                    if canEdit {
+                                        Image(systemName: "square.and.pencil")
+                                            .foregroundColor(Color.themePrimary.opacity(0.6))
+                                            .font(.system(size: 16, weight: .semibold))
+                                    }
+                                }
                                 
                                 Text(question.answer.isEmpty ? "No thoughts provided." : question.answer)
                                     .font(.system(size: 20))
