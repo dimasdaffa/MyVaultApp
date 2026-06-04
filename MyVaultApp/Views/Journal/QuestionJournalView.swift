@@ -21,57 +21,64 @@ struct QuestionJournalView: View {
     }
     
     var body: some View {
-        VStack{
-            ProgressBarView(currentStep: viewModel.currentProgress, totalSteps: viewModel.totalQuestions)
-            VStack(spacing: 20){
-                HStack(alignment: .lastTextBaseline,spacing: 0){
-                    Text("\(viewModel.currentProgress)/")
-                        .font(.system(size: 70))
-                        .bold()
-                        .foregroundStyle(viewModel.isLastQuestion ? Color.themePrimary : Color.black)
+        ZStack {
+            Color.themeBackground.ignoresSafeArea()
+            
+            VStack{
+                ProgressBarView(currentStep: viewModel.currentProgress, totalSteps: viewModel.totalQuestions)
+                VStack(spacing: 20){
+                    HStack(alignment: .lastTextBaseline,spacing: 0){
+                        Text("\(viewModel.currentProgress)/")
+                            .font(.system(size: 70))
+                            .bold()
+                            .foregroundStyle(viewModel.isLastQuestion ? Color.themePrimary : Color.black)
+                        
+                        Text("\(viewModel.totalQuestions)")
+                            .font(.system(size: 44))
+                            .bold()
+                            .foregroundStyle(Color.themePrimary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 43)
+                    .padding(.top,33)
                     
-                    Text("\(viewModel.totalQuestions)")
-                        .font(.system(size: 44))
-                        .bold()
-                        .foregroundStyle(Color.themePrimary)
+                    HStack{
+                        Text(viewModel.questions[viewModel.currentIndex].text)
+                            .font(.system(size: 27))
+                            .animation(.easeInOut, value: viewModel.currentIndex)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 44)
+                    Spacer()
+                    
+                    VStack{
+                        TextField("Express your thoughts here...",
+                                  text: currentAnswerBinding, // BIND DIRECTLY TO VIEWMODEL
+                                  axis: .vertical
+                        )
+                        .lineLimit(4...8)
+                        .font(.system(size: 18))
+                        .padding(20)
+                        .background(Color.themeBackground)
+                        .cornerRadius(24)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 24)
+                                .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+                        )
+                    }
+                    .padding(.horizontal, 44)
+                    .offset(y: -30)
                     Spacer()
                 }
-                .padding(.horizontal, 43)
-                .padding(.top,33)
-                
-                HStack{
-                    Text(viewModel.questions[viewModel.currentIndex].text)
-                        .font(.system(size: 27))
-                        .animation(.easeInOut, value: viewModel.currentIndex)
-                    Spacer()
-                }
-                .padding(.horizontal, 44)
-                Spacer()
-                
-                VStack{
-                    TextField("Express your thoughts here...",
-                              text: currentAnswerBinding, // BIND DIRECTLY TO VIEWMODEL
-                              axis: .vertical
-                    )
-                    .lineLimit(1...6)
-                    .font(.system(size: 20))
-                    
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(Color.gray.opacity(0.3))
-                }
-                .padding(.horizontal, 44)
-                .offset(y: -50)
-                Spacer()
+                .background(
+                    RoundedRectangle(cornerRadius: 42)
+                        .fill(Color.themeCard)
+                        .padding(.top,12)
+                        .padding(.horizontal,25)
+                )
             }
-            .background(
-                RoundedRectangle(cornerRadius: 42)
-                    .fill(Color.themeCard)
-                    .padding(.top,12)
-                    .padding(.horizontal,25)
-            )
+            .padding(.bottom, -10)
         }
-        .padding(.bottom, -10)
         .navigationTitle("Journal")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)

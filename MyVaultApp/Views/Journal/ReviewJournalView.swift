@@ -19,71 +19,75 @@ struct ReviewJournalView: View {
     var canEdit: Bool = true
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 35) {
-                
-                // Sembunyikan Header Kartu Barang jika sedang di dalam Timeout Sheet
-                if !isPresentedAsSheet {
-                    if let activeItem = journalVM.activeItem {
-                        ItemJournalCardView(item: activeItem)
-                    }
-                }
-                
-                HStack {
-                    Text("Observations")
-                        .font(.system(size: 28))
-                        .bold()
-                    Spacer()
-                    Text("\(journalVM.questions.count) Entries")
-                        .font(.system(size: 13))
-                        .foregroundColor(.gray)
-                        .fontWeight(.medium)
-                }
-                .padding(.horizontal, 30)
-                
-                VStack(spacing: 20) {
-                    ForEach(Array(journalVM.questions.enumerated()), id: \.element.text) { index, question in
-                        
-                        Button {
-                            if canEdit {
-                                journalVM.startEditing(at: index)
-                            }
-                        } label: {
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack(alignment: .top) {
-                                    Text(question.text)
-                                        .font(.system(size: 16))
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.gray)
-                                        .multilineTextAlignment(.leading)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    if canEdit {
-                                        Image(systemName: "square.and.pencil")
-                                            .foregroundColor(Color.themePrimary.opacity(0.6))
-                                            .font(.system(size: 16, weight: .semibold))
-                                    }
-                                }
-                                
-                                Text(question.answer.isEmpty ? "No thoughts provided." : question.answer)
-                                    .font(.system(size: 20))
-                                    .bold()
-                                    .multilineTextAlignment(.leading)
-                            }
-                            .padding(25)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                RoundedRectangle(cornerRadius: 30)
-                                    .fill(Color.themeCard)
-                            )
-                            .padding(.horizontal, 25)
+        ZStack {
+            Color.themeBackground.ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: 35) {
+                    
+                    // Sembunyikan Header Kartu Barang jika sedang di dalam Timeout Sheet
+                    if !isPresentedAsSheet {
+                        if let activeItem = journalVM.activeItem {
+                            ItemJournalCardView(item: activeItem)
                         }
-                        .buttonStyle(.plain)
-                        .disabled(!canEdit)
+                    }
+                    
+                    HStack {
+                        Text("Observations")
+                            .font(.system(size: 28))
+                            .bold()
+                        Spacer()
+                        Text("\(journalVM.questions.count) Entries")
+                            .font(.system(size: 13))
+                            .foregroundColor(.gray)
+                            .fontWeight(.medium)
+                    }
+                    .padding(.horizontal, 30)
+                    
+                    VStack(spacing: 20) {
+                        ForEach(Array(journalVM.questions.enumerated()), id: \.element.text) { index, question in
+                            
+                            Button {
+                                if canEdit {
+                                    journalVM.startEditing(at: index)
+                                }
+                            } label: {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    HStack(alignment: .top) {
+                                        Text(question.text)
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundColor(.secondary)
+                                            .multilineTextAlignment(.leading)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        
+                                        if canEdit {
+                                            Image(systemName: "square.and.pencil")
+                                                .foregroundColor(Color.themePrimary.opacity(0.6))
+                                                .font(.system(size: 16, weight: .semibold))
+                                        }
+                                    }
+                                    
+                                    Text(question.answer.isEmpty ? "No thoughts provided." : question.answer)
+                                        .font(.system(size: 17, weight: .regular))
+                                        .foregroundColor(.primary)
+                                        .multilineTextAlignment(.leading)
+                                }
+                                .padding(25)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 30)
+                                        .fill(Color.themeCard)
+                                        .shadow(color: Color.black.opacity(0.02), radius: 8, x: 0, y: 4)
+                                )
+                                .padding(.horizontal, 25)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(!canEdit)
+                        }
                     }
                 }
+                .padding(.top)
             }
-            .padding(.top)
         }
         .navigationTitle(isPresentedAsSheet ? "Initial Thoughts" : "Review Journal")
         .toolbar(.hidden, for: .tabBar)
