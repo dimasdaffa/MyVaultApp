@@ -19,7 +19,8 @@ final class CreateItemViewModel: ObservableObject {
     
     var isFormValid: Bool {
         let isTitleValid = !itemTitle.trimmingCharacters(in: .whitespaces).isEmpty
-        let isPriceValid = !itemPrice.trimmingCharacters(in: .whitespaces).isEmpty && itemPrice != "0"
+        let parsedPrice = cooldownPolicy.parsePriceDouble(itemPrice, currency: selectedCurrency)
+        let isPriceValid = parsedPrice > 0
         return isTitleValid && isPriceValid
     }
     
@@ -54,6 +55,36 @@ final class CreateItemViewModel: ObservableObject {
         
         journalVM.activeItem = newItem
         return newItem
+    }
+    
+    private func parseParts(_ input: String) -> (integer: String, decimal: String?) {
+        if input.isEmpty { return ("", nil) }
+        
+        // Find the last occurrence of "." or "," which could act as a decimal point.
+        if let lastSeparatorIndex = input.lastIndex(where: { $0 == "." || $0 == "," }) {
+            let afterSeparator = input[input.index(after: lastSeparatorIndex)...]
+            
+            // Check if this separator is a grouping separator or a decimal separator.
+            // In USD/RM, a grouping separator is "," and is typically followed by exactly 3 digits.
+            // Any "." is a decimal separator. Any "," followed by 0, 1, or 2 digits is a decimal separator.
+            let isDecimal: Bool
+            if input[lastSeparatorIndex] == "." {
+                isDecimal = true
+            } else {
+                isDecimal = afterSeparator.isEmpty || afterSeparator.count < 3
+            }
+            
+            if isDecimal {
+                let beforeSeparator = input[..<lastSeparatorIndex]
+                let cleanInteger = beforeSeparator.filter { "0123456789".contains($0) }
+                let cleanDecimal = afterSeparator.filter { "0123456789".contains($0) }
+                return (cleanInteger, String(cleanDecimal.prefix(2)))
+            }
+        }
+        
+        // No decimal separator found
+        let cleanInteger = input.filter { "0123456789".contains($0) }
+        return (cleanInteger, nil)
     }
     
     private func formatCurrency(_ value: String, currency: Currency) -> String {

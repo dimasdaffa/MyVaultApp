@@ -11,7 +11,7 @@ struct CooldownPolicy {
     static let `default` = CooldownPolicy()
 
     func cooldownDuration(for priceString: String, currency: Currency) -> TimeInterval {
-        let cleanPrice = Double(priceString.filter { "0123456789".contains($0) }) ?? 0
+        let cleanPrice = parsePriceDouble(priceString, currency: currency)
 
         switch currency {
         case .idr:
@@ -27,6 +27,17 @@ struct CooldownPolicy {
             if cleanPrice < 150 { return 86400 }
             if cleanPrice <= 1500 { return 172800 }
             return 259200
+        }
+    }
+
+    func parsePriceDouble(_ priceString: String, currency: Currency) -> Double {
+        if currency == .idr {
+            let cleanString = priceString.replacingOccurrences(of: ".", with: "")
+            return Double(cleanString) ?? 0
+        } else {
+            // Remove grouping commas
+            let cleanString = priceString.replacingOccurrences(of: ",", with: "")
+            return Double(cleanString) ?? 0
         }
     }
 }
