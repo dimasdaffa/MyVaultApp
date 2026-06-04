@@ -12,6 +12,7 @@ struct CreateItemView: View {
     @Binding var navPath: NavigationPath
     
     @EnvironmentObject var journalVM: JournalViewModel
+    @Environment(\.hapticProvider) private var hapticProvider
     @StateObject private var viewModel = CreateItemViewModel()
     
     var body: some View {
@@ -134,7 +135,7 @@ struct CreateItemView: View {
                 
                 Button{
                     if viewModel.prepareItem(journalVM: journalVM) != nil {
-                        HapticManager.shared.notification(type: .success)
+                        hapticProvider.notification(type: .success)
                         navPath.append("FirstPage")
                     }
                 } label: {

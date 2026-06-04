@@ -11,13 +11,14 @@ struct EmotionQuestionView: View {
     @Binding var navPath: NavigationPath
     
     @EnvironmentObject var validationVM: ValidationViewModel
+    @Environment(\.hapticProvider) private var hapticProvider
     
     var body: some View {
         
         VStack{
             ProgressBarView(
                 currentStep: validationVM.currentEmotionIndex + 1,
-                totalSteps: 12
+                totalSteps: validationVM.totalSteps
             )
             
             VStack(spacing: 20){
@@ -25,7 +26,7 @@ struct EmotionQuestionView: View {
                     Text("\(validationVM.currentTotalProgress)/")
                         .font(.system(size: 70))
                         .bold()
-                    Text("12")
+                    Text("\(validationVM.totalSteps)")
                         .font(.system(size: 44))
                         .bold()
                         .foregroundStyle(Color.themePrimary)
@@ -47,7 +48,7 @@ struct EmotionQuestionView: View {
                 VStack(spacing: 15){
                     ForEach(QuestionsData.emotionOptions) { option in
                         Button(action: {
-                            HapticManager.shared.impact(style: .light)
+                            hapticProvider.impact(style: .light)
                             validationVM.emotionQuestions[validationVM.currentEmotionIndex].score = option.score
                         }) {
                             Text(option.label)
@@ -77,7 +78,7 @@ struct EmotionQuestionView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    HapticManager.shared.impact(style: .medium)
+                    hapticProvider.impact(style: .medium)
                     // Jika pertanyaan terakhir, pindah ke halaman Finansial
                     if validationVM.currentEmotionIndex == validationVM.emotionQuestions.count - 1 {
                         navPath.append("FinanceQuestion")

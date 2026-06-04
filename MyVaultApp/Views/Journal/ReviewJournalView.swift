@@ -14,9 +14,18 @@ struct ReviewJournalView: View {
     @Environment(\.dismiss) var dismiss
     
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.vaultItemRepositoryFactory) private var repositoryFactory
+    @Environment(\.hapticProvider) private var hapticProvider
     
     var isPresentedAsSheet: Bool = false
     var canEdit: Bool = true
+
+    @State private var showSaveError = false
+    @State private var saveErrorMessage = ""
+
+    private var repository: any VaultItemRepository {
+        repositoryFactory(modelContext)
+    }
     
     var body: some View {
         ZStack {
@@ -97,7 +106,7 @@ struct ReviewJournalView: View {
                     Button("Close") { dismiss() }
                 } else {
                     Button {
-                        HapticManager.shared.notification(type: .success)
+                        hapticProvider.notification(type: .success)
                         // COMBINE THE JOURNAL ANSWERS INTO THE ITEM
                         journalVM.lockInJournalAnswers()
                         
@@ -106,9 +115,15 @@ struct ReviewJournalView: View {
                             // If it's an existing item being edited, SwiftData auto-saves it automatically
                             if finalItemToSave.modelContext == nil {
                                 // START THE TIMER NOW — cooldown begins from confirm, not from "START"
-                                modelContext.insert(finalItemToSave)
+                                repository.insert(finalItemToSave)
                                 finalItemToSave.targetDate = Date().addingTimeInterval(finalItemToSave.cooldownDuration)
-                                try? modelContext.save()
+                                do {
+                                    try repository.save()
+                                } catch {
+                                    saveErrorMessage = error.localizedDescription
+                                    showSaveError = true
+                                    return
+                                }
                             }
                         }
                         // WIPE THE JOURNAL CLEAN FOR THE NEXT TIME
@@ -163,6 +178,11 @@ struct ReviewJournalView: View {
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
+        }
+        .alert("Save Failed", isPresented: $showSaveError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(saveErrorMessage)
         }
     }
 }
