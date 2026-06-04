@@ -260,6 +260,7 @@ struct TimeoutView: View {
         }
         .alert("Discard Item", isPresented: $showDeleteAlert) {
             Button("Delete", role: .destructive) {
+                NotificationManager.shared.cancelNotification(for: item)
                 // Delete it permanently from SwiftData
                 repository.delete(item)
                 // Pop back to the Dashboard

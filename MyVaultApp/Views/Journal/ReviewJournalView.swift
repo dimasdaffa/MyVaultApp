@@ -116,6 +116,7 @@ struct ReviewJournalView: View {
                             repository.insert(finalItemToSave)
                             do {
                                 try repository.save()
+                                NotificationManager.shared.scheduleNotification(for: finalItemToSave)
                             } catch {
                                 saveErrorMessage = error.localizedDescription
                                 showSaveError = true

@@ -20,6 +20,7 @@ class HistoryViewModel: ObservableObject {
     func deleteItems(at offsets: IndexSet, from historyItems: [VaultItem], repository: any VaultItemRepository) {
         for index in offsets {
             let itemToDelete = historyItems[index]
+            NotificationManager.shared.cancelNotification(for: itemToDelete)
             repository.delete(itemToDelete)
         }
     }
