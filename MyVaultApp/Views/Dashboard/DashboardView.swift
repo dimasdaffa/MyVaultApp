@@ -44,7 +44,7 @@ struct DashboardView: View {
                             dashboardVM.checkAlertStatus(items: vaultItems) 
                         }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 30)
                 Spacer()
             }
             .background(Color.themeBackground)

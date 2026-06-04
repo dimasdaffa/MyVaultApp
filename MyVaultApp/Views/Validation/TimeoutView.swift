@@ -223,7 +223,8 @@ struct TimeoutView: View {
                     Text("Validate Answer")
                         .fontWeight(.medium)
                         .foregroundColor(viewModel.isTimerFinished ? .white : .gray)
-                        .frame(width: 350, height: 62)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 62)
                         .background(
                             RoundedRectangle(cornerRadius: 40)
                                 .fill(viewModel.isTimerFinished ? Color.themePrimary : Color.gray.opacity(0.3))
@@ -231,6 +232,7 @@ struct TimeoutView: View {
                         .shadow(color: viewModel.isTimerFinished ? Color.themePrimary.opacity(0.8) : Color.clear, radius: 10, x: 0, y: 5)
                 }
                 .disabled(!viewModel.isTimerFinished)
+                .padding(.horizontal, 30)
                 
             }
         }

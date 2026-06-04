@@ -53,7 +53,7 @@ struct HistoryView: View {
                                 }
                                 .listRowSeparator(.hidden)
                                 .listRowBackground(Color.clear)
-                                .listRowInsets(EdgeInsets(top: 10, leading: 25, bottom: 10, trailing: 25))
+                                .listRowInsets(EdgeInsets(top: 10, leading: 30, bottom: 10, trailing: 30))
                         }
                         .onDelete { offsets in
                             viewModel.deleteItems(at: offsets, from: historyItems, repository: repository)
@@ -115,7 +115,7 @@ struct HistoryView: View {
         }
         .padding(20)
         .background(
-            RoundedRectangle(cornerRadius: 25)
+            RoundedRectangle(cornerRadius: 30)
                 .fill(Color.themeCard)
         )
     }

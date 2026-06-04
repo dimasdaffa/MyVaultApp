@@ -70,7 +70,7 @@ struct NoBuyResultView: View {
                 RoundedRectangle(cornerRadius: 42)
                     .fill(Color.themeBlack)
             )
-            .padding(.horizontal, 25)
+            .padding(.horizontal, 30)
             
             Button {
                 navPath.removeLast(navPath.count)
@@ -79,13 +79,15 @@ struct NoBuyResultView: View {
                     .font(.title3)
                     .fontWeight(.medium)
                     .foregroundColor(.white)
-                    .frame(width: 350, height: 62)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 62)
                     .background(
                         RoundedRectangle(cornerRadius: 40)
                             .fill(Color.themePrimary)
                     )
                     .shadow(color: Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
             }
+            .padding(.horizontal, 30)
             .background(Color.themeBackground)
         }
         .onAppear {

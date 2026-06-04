@@ -143,7 +143,8 @@ struct CreateItemView: View {
                         .font(.title3)
                         .fontWeight(.medium)
                         .foregroundColor(.white)
-                        .frame(width: 350, height: 62)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 62)
                         .background(
                             RoundedRectangle(cornerRadius: 40)
                                 .fill(viewModel.isFormValid ? Color.themePrimary : Color.gray.opacity(0.3))
@@ -151,6 +152,7 @@ struct CreateItemView: View {
                         .shadow(color: viewModel.isFormValid ? Color.themePrimary.opacity(1) : Color.clear, radius: 10, x: 0, y: 5)
                 }
                 .disabled(!viewModel.isFormValid)
+                .padding(.horizontal, 30)
                 .padding(.top, 20)
                 .padding(.bottom, 40)
             }
