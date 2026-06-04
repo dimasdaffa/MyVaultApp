@@ -88,7 +88,7 @@ struct ReviewJournalView: View {
                                         .fill(Color.themeCard)
                                         .shadow(color: Color.black.opacity(0.02), radius: 8, x: 0, y: 4)
                                 )
-                                .padding(.horizontal, 25)
+                                .padding(.horizontal, 30)
                             }
                             .buttonStyle(.plain)
                             .disabled(!canEdit)

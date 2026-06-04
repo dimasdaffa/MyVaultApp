@@ -32,7 +32,7 @@ struct EmotionQuestionView: View {
                         .foregroundStyle(Color.themePrimary)
                     Spacer()
                 }
-                .padding(.horizontal, 43)
+                .padding(.horizontal, 44)
                 .padding(.top,33)
                 
                 HStack{
@@ -60,7 +60,7 @@ struct EmotionQuestionView: View {
                 .foregroundColor(Color.themeBackground)
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .padding(.horizontal, 50)
+                .padding(.horizontal, 44)
                 Spacer()
             }
             .background(

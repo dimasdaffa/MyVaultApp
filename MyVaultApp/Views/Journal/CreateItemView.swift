@@ -31,7 +31,7 @@ struct CreateItemView: View {
                         }
                         Spacer()
                     }
-                    .padding(.horizontal, 31)
+                    .padding(.horizontal, 30)
                     
                     HStack() {
                         VStack(alignment: .leading){
@@ -44,7 +44,7 @@ struct CreateItemView: View {
                         }
                         Spacer()
                     }
-                    .padding(.horizontal, 31)
+                    .padding(.horizontal, 30)
                     
                     VStack {
                         HStack {
@@ -59,7 +59,7 @@ struct CreateItemView: View {
                             .cornerRadius(42)
                     }
                     .padding(.top, 14)
-                    .padding(.horizontal, 31)
+                    .padding(.horizontal, 30)
                     
                     VStack {
                         HStack {
@@ -107,7 +107,7 @@ struct CreateItemView: View {
                         }
                     }
                     .padding(.top, 14)
-                    .padding(.horizontal, 31)
+                    .padding(.horizontal, 30)
                     
                     VStack {
                         HStack {
@@ -130,7 +130,7 @@ struct CreateItemView: View {
                         
                     }
                     .padding(.top, 14)
-                    .padding(.horizontal, 31)
+                    .padding(.horizontal, 30)
                 }
                 
                 Button{

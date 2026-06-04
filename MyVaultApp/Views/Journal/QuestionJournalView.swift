@@ -39,7 +39,7 @@ struct QuestionJournalView: View {
                             .foregroundStyle(Color.themePrimary)
                         Spacer()
                     }
-                    .padding(.horizontal, 43)
+                    .padding(.horizontal, 44)
                     .padding(.top,33)
                     
                     HStack{

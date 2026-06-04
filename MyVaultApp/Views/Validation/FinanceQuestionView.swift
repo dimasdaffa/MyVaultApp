@@ -31,7 +31,7 @@ struct FinanceQuestionView: View {
                     Spacer()
                 }
                 .foregroundStyle(Color.themePrimary)
-                .padding(.horizontal, 43)
+                .padding(.horizontal, 44)
                 .padding(.top,33)
                 
                 HStack{
@@ -58,7 +58,7 @@ struct FinanceQuestionView: View {
                 .foregroundColor(Color.themeBackground)
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .padding(.horizontal, 50)
+                .padding(.horizontal, 44)
                 Spacer()
                 Spacer()
             }

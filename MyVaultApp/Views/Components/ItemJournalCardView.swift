@@ -49,7 +49,7 @@ struct ItemJournalCardView: View {
             RoundedRectangle(cornerRadius: 30)
                 .fill(Color.themeCard)
         )
-        .padding(.horizontal, 25)
+        .padding(.horizontal, 30)
     }
 }
 
