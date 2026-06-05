@@ -113,6 +113,23 @@ struct HistoryView: View {
                     .font(.system(size: 14))
                     .foregroundColor(.gray.opacity(0.7))
             }
+            
+            // Source link row
+            if !item.link.isEmpty, let url = item.url {
+                Button {
+                    UIApplication.shared.open(url)
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "link")
+                            .font(.system(size: 13))
+                        Text(item.link)
+                            .font(.system(size: 14))
+                            .lineLimit(1)
+                    }
+                    .foregroundColor(Color.themePrimary)
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(20)
         .background(
