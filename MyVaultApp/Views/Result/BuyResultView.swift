@@ -49,44 +49,47 @@ struct BuyResultView: View {
                 }
                 Spacer()
                 
-                HStack{
-                    Image(systemName: "chart.bar.xaxis")
-                        .font(.system(size: 57))
-                        .foregroundStyle(Color.themeBackground)
-                    VStack(alignment: .leading, spacing: 5){
-                        Text("HEALTHY MARGIN")
-                            .font(.system(size: 13))
-                            .fontWeight(.medium)
-                            .foregroundColor(.gray)
-                        Text("Budget approved. This purchase won't mess up your goals.")
-                            .font(.system(size: 15))
+                VStack {
+                    HStack{
+                        Image(systemName: "chart.bar.xaxis")
+                            .font(.system(size: 57))
                             .foregroundStyle(Color.themeBackground)
+                        VStack(alignment: .leading, spacing: 5){
+                            Text("HEALTHY MARGIN")
+                                .font(.system(size: 13))
+                                .fontWeight(.medium)
+                                .foregroundColor(.gray)
+                            Text("Budget approved. This purchase won't mess up your goals.")
+                                .font(.system(size: 15))
+                                .foregroundStyle(Color.themeBackground)
+                        }
                     }
+                    .padding(30)
+                    
+                    .background(
+                        RoundedRectangle(cornerRadius: 42)
+                            .fill(Color.themeBlack)
+                    )
+                    .padding(.horizontal, 30)
+                    
+                    Button {
+                        navPath.removeLast(navPath.count)
+                    } label:{
+                        Text("FINISH")
+                            .font(.title3)
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 62)
+                            .background(
+                                RoundedRectangle(cornerRadius: 40)
+                                    .fill(Color.themePrimary)
+                            )
+                            .shadow(color: Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
+                    }
+                    .padding(.horizontal, 30)
                 }
-                .padding(30)
-                
-                .background(
-                    RoundedRectangle(cornerRadius: 42)
-                        .fill(Color.themeBlack)
-                )
-                .padding(.horizontal, 30)
-                
-                Button {
-                    navPath.removeLast(navPath.count)
-                } label:{
-                    Text("FINISH")
-                        .font(.title3)
-                        .fontWeight(.medium)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 62)
-                        .background(
-                            RoundedRectangle(cornerRadius: 40)
-                                .fill(Color.themePrimary)
-                        )
-                        .shadow(color: Color.themePrimary.opacity(1), radius: 10, x: 0, y: 5)
-                }
-                .padding(.horizontal, 30)
+                .adaptiveContainer()
                 .background(Color.themeBackground)
         }
         .onAppear {
