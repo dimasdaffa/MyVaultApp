@@ -70,6 +70,7 @@ struct EmotionQuestionView: View {
                     .padding(.horizontal,25)
             )
         }
+        .adaptiveContainer(maxWidth: 700)
         .padding(.bottom, -10)
         
         .navigationTitle("Validation")

@@ -61,6 +61,7 @@ struct HistoryView: View {
                     }
                     .listStyle(.plain)
                     .padding(.top, 15)
+                    .adaptiveContainer(maxWidth: 700)
                 }
             }
             .navigationTitle("History")

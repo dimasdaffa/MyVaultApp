@@ -156,6 +156,7 @@ struct CreateItemView: View {
                 .padding(.top, 20)
                 .padding(.bottom, 40)
             }
+            .adaptiveContainer()
         }
         .scrollDismissesKeyboard(.interactively)
         .onTapGesture {

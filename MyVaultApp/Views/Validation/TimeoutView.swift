@@ -237,6 +237,7 @@ struct TimeoutView: View {
                     .padding(.bottom, 30)
                 }
                 .padding(.top, 15)
+                .adaptiveContainer()
             }
         }
         .navigationTitle(viewModel.isTimerFinished ? "Validation" : "Cooling Down")

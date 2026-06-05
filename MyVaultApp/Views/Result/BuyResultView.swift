@@ -21,7 +21,7 @@ struct BuyResultView: View {
                         .font(.system(size: 15))
                         .bold()
                     VStack(alignment: .center, spacing: -10){
-                        Text("You’re allowed")
+                        Text("You're allowed")
                             .font(.system(size: 45))
                             .bold()
                         HStack{
@@ -58,7 +58,7 @@ struct BuyResultView: View {
                             .font(.system(size: 13))
                             .fontWeight(.medium)
                             .foregroundColor(.gray)
-                        Text("Budget approved. This purchase won’t mess up your goals.")
+                        Text("Budget approved. This purchase won't mess up your goals.")
                             .font(.system(size: 15))
                             .foregroundStyle(Color.themeBackground)
                     }

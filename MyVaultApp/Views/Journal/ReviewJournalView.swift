@@ -96,6 +96,7 @@ struct ReviewJournalView: View {
                     }
                 }
                 .padding(.top)
+                .adaptiveContainer()
             }
         }
         .navigationTitle(isPresentedAsSheet ? "Initial Thoughts" : "Review Journal")
